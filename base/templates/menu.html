@@ -1,0 +1,601 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chilled Menu | Donzel Artisanal Ice Cream Parlour</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-gold: #c5a880;
+            --dark-bg: #0d0d0d;
+            --surface-bg: #161616;
+            --card-bg: #1a1a1a;
+            --text-light: #f5f5f5;
+            --text-muted: #aaaaaa;
+            --border-color: #222222;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Montserrat', sans-serif; background-color: var(--dark-bg); color: var(--text-light); line-height: 1.6; }
+        h1, h2, h3, h4 { font-family: 'Cormorant Garamond', serif; letter-spacing: 1px; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; width: 100%; }
+
+        /* Minimal Navbar (Logo, Menu, Cart, Sidebar Button) */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 70px;
+            z-index: 1000;
+            background: rgba(13, 13, 13, 0.95);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(197, 168, 128, 0.2);
+            display: flex;
+            align-items: center;
+        }
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .logo {
+            font-size: 24px;
+            color: var(--primary-gold);
+            text-decoration: none;
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 3px;
+            font-family: 'Cormorant Garamond', serif;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            line-height: 1;
+        }
+        .logo:hover { opacity: 0.9; }
+
+        .nav-right-group {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .nav-link-item {
+            color: var(--text-light);
+            text-decoration: none;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+        .nav-link-item:hover, .nav-link-item.active { color: var(--primary-gold); }
+
+        .cart-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(197, 168, 128, 0.1);
+            border: 1px solid rgba(197, 168, 128, 0.3);
+            padding: 6px 14px;
+            border-radius: 20px;
+            color: var(--primary-gold);
+            text-decoration: none;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .cart-pill:hover {
+            background: rgba(197, 168, 128, 0.2);
+            border-color: var(--primary-gold);
+        }
+        .cart-count-badge {
+            background: var(--primary-gold);
+            color: #111;
+            font-size: 11px;
+            font-weight: 700;
+            border-radius: 10px;
+            padding: 2px 7px;
+            min-width: 18px;
+            text-align: center;
+        }
+
+        .profile-trigger-btn {
+            background: rgba(197, 168, 128, 0.1);
+            border: 1px solid rgba(197, 168, 128, 0.3);
+            color: var(--primary-gold);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+        .profile-trigger-btn:hover {
+            background: rgba(197, 168, 128, 0.25);
+            border-color: var(--primary-gold);
+        }
+
+        /* Drawer Overlay & Panel Sidebar */
+        .drawer-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(4px);
+            z-index: 2000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .drawer-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .profile-drawer {
+            position: fixed;
+            top: 0;
+            right: -420px;
+            width: 380px;
+            max-width: 90vw;
+            height: 100vh;
+            background: #121212;
+            border-left: 1px solid rgba(197, 168, 128, 0.25);
+            z-index: 2001;
+            transition: right 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 25px 20px;
+            box-shadow: -10px 0 30px rgba(0,0,0,0.8);
+            overflow-y: auto;
+        }
+        .profile-drawer.active {
+            right: 0;
+        }
+
+        .drawer-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 18px;
+            margin-bottom: 25px;
+        }
+        .drawer-title {
+            font-size: 20px;
+            color: var(--primary-gold);
+            font-family: 'Cormorant Garamond', serif;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+        .drawer-close-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 24px;
+            cursor: pointer;
+        }
+        .drawer-close-btn:hover { color: var(--primary-gold); }
+
+        .user-info-card {
+            background: rgba(22, 22, 22, 0.8);
+            border: 1px solid rgba(197, 168, 128, 0.2);
+            border-radius: 8px;
+            padding: 18px;
+            margin-bottom: 25px;
+        }
+        .user-info-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+        .user-avatar-circle {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: rgba(197, 168, 128, 0.15);
+            border: 1px solid var(--primary-gold);
+            color: var(--primary-gold);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        .user-name-title { font-size: 16px; font-weight: 600; color: var(--text-light); }
+        .user-role-badge { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: var(--primary-gold); background: rgba(197, 168, 128, 0.1); padding: 2px 8px; border-radius: 10px; display: inline-block; }
+        .user-detail-line { font-size: 12px; color: var(--text-muted); margin-top: 6px; }
+
+        .drawer-nav-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            flex-grow: 1;
+        }
+        .drawer-nav-list a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #d1d1d1;
+            text-decoration: none;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            padding: 10px 14px;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+            background: rgba(255,255,255,0.02);
+            border: 1px solid transparent;
+        }
+        .drawer-nav-list a:hover {
+            background: rgba(197, 168, 128, 0.1);
+            border-color: rgba(197, 168, 128, 0.3);
+            color: var(--primary-gold);
+        }
+
+        .drawer-logout-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            padding: 12px;
+            background: rgba(217, 83, 79, 0.1);
+            border: 1px solid #d9534f;
+            color: #d9534f;
+            text-decoration: none;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 600;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+        .drawer-logout-btn:hover { background: #d9534f; color: #fff; }
+
+        /* Page Header */
+        .page-header { padding: 140px 0 40px 0; background: linear-gradient(rgba(13,13,13,0.92), rgba(13,13,13,0.95)), url('/static/images/hero3_bg.png') no-repeat center center/cover; text-align: center; }
+        .page-header h1 { font-size: 56px; color: var(--primary-gold); margin-bottom: 15px; }
+
+        /* Search Bar */
+        .search-box { max-width: 500px; margin: 0 auto 20px auto; position: relative; }
+        .search-input { width: 100%; padding: 14px 20px; background-color: rgba(22,22,22,0.8); border: 1px solid var(--border-color); color: var(--text-light); font-size: 14px; font-family: 'Montserrat', sans-serif; transition: all 0.3s ease; border-radius: 30px; text-align: center; outline: none; }
+        .search-input:focus { border-color: var(--primary-gold); background-color: #161616; box-shadow: 0 0 15px rgba(197, 168, 128, 0.2); }
+
+        /* Sticky Tabs Navigation */
+        .tabs-container { background-color: rgba(8, 8, 8, 0.98); backdrop-filter: blur(8px); padding: 15px 0; border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); position: sticky; top: 70px; z-index: 900; text-align: center; }
+        .menu-tabs { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; list-style: none; max-width: 1000px; margin: 0 auto; }
+        
+        .tab-btn { background: transparent; border: 1px solid rgba(197, 168, 128, 0.2); color: var(--text-muted); padding: 8px 20px; font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; cursor: pointer; font-weight: 500; transition: all 0.3s ease; border-radius: 20px; }
+        .tab-btn:hover, .tab-btn.active { background-color: var(--primary-gold); color: #111; border-color: var(--primary-gold); font-weight: 600; }
+
+        /* Menu Content Area */
+        .menu-content { padding: 60px 0 100px 0; min-height: 500px; }
+        .category-content { display: none; animation: fadeIn 0.4s ease-in-out forwards; }
+        .category-content.active-cat { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Dotted Line Classic Menu Grid */
+        .menu-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 35px 50px; }
+        .menu-item { background-color: rgba(22, 22, 22, 0.6); padding: 22px; border: 1px solid var(--border-color); transition: all 0.3s ease; position: relative; border-radius: 8px; }
+        .menu-item:hover { border-color: var(--primary-gold); background-color: rgba(22, 22, 22, 0.95); transform: translateY(-3px); }
+        .item-main { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; }
+        .item-name { font-size: 22px; font-weight: 500; color: var(--text-light); font-family: 'Cormorant Garamond', serif; }
+        .item-line { flex-grow: 1; border-bottom: 1px dashed rgba(255, 255, 255, 0.15); margin: 0 15px; }
+        .item-price { font-size: 22px; font-weight: 600; color: var(--primary-gold); font-family: 'Cormorant Garamond', serif; }
+        .item-sub { display: flex; justify-content: space-between; font-size: 11px; color: var(--primary-gold); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 8px; font-weight: 500; }
+        .item-ingredients { font-size: 13px; color: var(--text-muted); font-weight: 300; line-height: 1.6; }
+        .no-results { text-align: center; color: var(--text-muted); padding: 60px 0; font-size: 18px; font-family: 'Cormorant Garamond', serif; display: none; }
+
+        /* Toast Notification */
+        .toast-notification {
+            position: fixed; bottom: 30px; right: 30px; background-color: var(--surface-bg); border: 1px solid var(--primary-gold); color: var(--text-light); padding: 15px 25px; border-radius: 4px; box-shadow: 0 10px 30px rgba(0,0,0,0.8); z-index: 1000; font-size: 14px; display: none; animation: slideUp 0.3s ease-out forwards;
+        }
+        @keyframes slideUp { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+        /* Footer Styles */
+        .footer { background-color: #050505; padding: 60px 0 30px 0; border-top: 1px solid var(--border-color); }
+        .footer-grid { display: flex; gap: 40px; margin-bottom: 40px; justify-content: space-between; text-align: left; }
+        .footer-col { flex: 1; }
+        .footer-col h3 { font-size: 24px; color: var(--primary-gold); margin-bottom: 25px; text-transform: uppercase; letter-spacing: 1px; font-family: 'Cormorant Garamond', serif; }
+        .footer-col p { color: var(--text-muted); font-size: 14px; margin-bottom: 12px; font-weight: 300; }
+        .footer-col a { color: var(--text-muted); text-decoration: none; font-size: 13px; transition: color 0.3s ease; }
+        .footer-col a:hover { color: var(--primary-gold); }
+        .footer-bottom { text-align: center; font-size: 12px; color: #555; border-top: 1px solid #1a1c26; padding-top: 25px; margin-top: 20px; }
+
+        @media (max-width: 850px) {
+            .menu-grid, .footer-grid { grid-template-columns: 1fr; flex-direction: column; gap: 25px; }
+            .page-header h1 { font-size: 38px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Toast Notification Popup -->
+    <div id="toastNotification" class="toast-notification"></div>
+
+    <!-- Minimal Navbar (Logo, Menu, Cart, Sidebar Button) -->
+    <nav class="navbar">
+        <div class="container nav-container">
+            <a href="{% url 'home' %}" class="logo">
+                🍨 DONZEL
+            </a>
+            
+            <div class="nav-right-group">
+                <a href="{% url 'menu' %}" class="nav-link-item active">Menu</a>
+
+                <a href="{% url 'cart' %}" class="cart-pill" title="View Cart">
+                    <span>🛒 Cart</span>
+                    <span class="cart-count-badge" id="cartBadge">{% if cart_count %}{{ cart_count }}{% else %}0{% endif %}</span>
+                </a>
+
+                <button class="profile-trigger-btn" onclick="toggleProfileDrawer()" title="Open Sidebar">
+                    <span>👤 {% if user.is_authenticated %}{{ user.username }}{% endif %}</span>
+                    <span style="font-size:14px; font-weight:bold;">⋯</span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    {% include 'includes/sidebar.html' %}
+
+    <!-- Header -->
+    <header class="page-header">
+        <div class="container">
+            <h1>Our Chilled Ice Cream Menu</h1>
+            <div class="search-box">
+                <input type="text" id="menuSearch" class="search-input" placeholder="🔍 Search ice cream, shake, or flavour..." onkeyup="filterMenu()">
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation Tabs for Categories -->
+    <div class="tabs-container">
+        <div class="container">
+            <div class="menu-tabs">
+                <button class="tab-btn active" onclick="openCategory(event, 'all-items')">All Creations</button>
+                {% for category_name in menu_items.keys %}
+                    <button class="tab-btn" onclick="openCategory(event, 'cat-{{ forloop.counter }}')">
+                        {{ category_name }}
+                    </button>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Menu Items Area -->
+    <section class="menu-content">
+        <div class="container">
+            
+            <div id="noResults" class="no-results">
+                No chilled delights found matching your search. Try searching for "Coco", "Brownie", or "Biscoff".
+            </div>
+
+            <!-- All items tab view -->
+            <div id="all-items" class="category-content active-cat">
+                <div class="menu-grid">
+                    {% for category_name, items in menu_items.items %}
+                        {% for item in items %}
+                        <div class="menu-item" data-name="{{ item.name|lower }}" data-cat="{{ category_name|lower }}" data-ing="{{ item.ingredeients|lower }}">
+                            <div class="item-main">
+                                <span class="item-name">{{ item.name }}</span>
+                                <span class="item-line"></span>
+                                <span class="item-price">
+                                    {% if item.price %}₹{{ item.price }}{% else %}—{% endif %}
+                                </span>
+                            </div>
+                            
+                            <div class="item-sub">
+                                <span>Category: {{ category_name }}</span>
+                                {% if item.volume %}<span>{{ item.volume }}</span>{% endif %}
+                            </div>
+                            
+                            {% if item.ingredeients %}
+                                <p class="item-ingredients">Ingredients: {{ item.ingredeients }}</p>
+                            {% endif %}
+
+                            {% if item.price %}
+                            <form onsubmit="quickAddToCart(this, event)" style="margin-top: 12px; text-align: right;">
+                                {% csrf_token %}
+                                <input type="hidden" name="item_name" value="{{ item.name }}">
+                                <input type="hidden" name="price" value="{{ item.price }}">
+                                <input type="hidden" name="quantity" value="1">
+                                <button type="submit" style="background: transparent; border: 1px solid var(--primary-gold); color: var(--primary-gold); padding: 6px 16px; font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; cursor: pointer; border-radius: 4px; font-weight: 600; transition: all 0.3s;" onmouseover="this.style.background='var(--primary-gold)'; this.style.color='#111';" onmouseout="this.style.background='transparent'; this.style.color='var(--primary-gold)';">
+                                    + Add to Cart 🛒
+                                </button>
+                            </form>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Individual category tab views -->
+            {% for category_name, items in menu_items.items %}
+            <div id="cat-{{ forloop.counter }}" class="category-content">
+                <div class="menu-grid">
+                    {% for item in items %}
+                    <div class="menu-item" data-name="{{ item.name|lower }}" data-cat="{{ category_name|lower }}" data-ing="{{ item.ingredeients|lower }}">
+                        <div class="item-main">
+                            <span class="item-name">{{ item.name }}</span>
+                            <span class="item-line"></span>
+                            <span class="item-price">
+                                {% if item.price %}₹{{ item.price }}{% else %}—{% endif %}
+                            </span>
+                        </div>
+                        
+                        <div class="item-sub">
+                            {% if item.volume %}<span>Serving: {{ item.volume }}</span>{% endif %}
+                        </div>
+                        
+                        {% if item.ingredeients %}
+                            <p class="item-ingredients">{{ item.ingredeients }}</p>
+                        {% endif %}
+
+                        {% if item.price %}
+                        <form onsubmit="quickAddToCart(this, event)" style="margin-top: 12px; text-align: right;">
+                            {% csrf_token %}
+                            <input type="hidden" name="item_name" value="{{ item.name }}">
+                            <input type="hidden" name="price" value="{{ item.price }}">
+                            <input type="hidden" name="quantity" value="1">
+                            <button type="submit" style="background: transparent; border: 1px solid var(--primary-gold); color: var(--primary-gold); padding: 6px 16px; font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; cursor: pointer; border-radius: 4px; font-weight: 600; transition: all 0.3s;" onmouseover="this.style.background='var(--primary-gold)'; this.style.color='#111';" onmouseout="this.style.background='transparent'; this.style.color='var(--primary-gold)';">
+                                + Add to Cart 🛒
+                            </button>
+                        </form>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
+
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer id="footer" class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <h3>DONZEL ICE CREAM</h3>
+                    <p>Experience sweet luxury. We bring you the finest artisanal desserts, cold cocoa blends, and sub-zero creations in an elite ambiance.</p>
+                </div>
+                <div class="footer-col">
+                    <h3 style="color: #fff; font-size: 16px;">Contact & Location</h3>
+                    <p>📍 S.G. Highway, near LJ University, Ahmedabad</p>
+                    <p>🕒 Open Daily: 11:00 AM – 1:00 AM</p>
+                    <p>📞 +91 98765 43210</p>
+                    <p>📧 info@donzelicecream.com</p>
+                </div>
+                <div class="footer-col">
+                    <h3 style="color: #fff; font-size: 16px;">Quick Links</h3>
+                    <ul style="list-style: none;">
+                        <li style="margin-bottom: 8px;"><a href="{% url 'menu' %}">📜 Full Chilled Menu</a></li>
+                        <li style="margin-bottom: 8px;"><a href="{% url 'customizer' %}">🍨 Sundae Studio</a></li>
+                        <li style="margin-bottom: 8px;"><a href="{% url 'about' %}">📖 Our Craft & Story</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                &copy; 2026 Donzel Artisanal Ice Cream Parlour. All Rights Reserved.
+            </div>
+        </div>
+    </footer>
+
+    <!-- JS for Category Tabs, Search & Quick Add to Cart -->
+    <script>
+        function openCategory(evt, catId) {
+            var i, content, tablinks;
+            content = document.getElementsByClassName("category-content");
+            for (i = 0; i < content.length; i++) {
+                content[i].classList.remove("active-cat");
+            }
+            tablinks = document.getElementsByClassName("tab-btn");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].classList.remove("active");
+            }
+            document.getElementById(catId).classList.add("active-cat");
+            evt.currentTarget.classList.add("active");
+            filterMenu();
+        }
+
+        function filterMenu() {
+            var input = document.getElementById("menuSearch");
+            var query = input.value.toLowerCase().trim();
+            var activeCat = document.querySelector(".category-content.active-cat");
+            if (!activeCat) return;
+
+            var items = activeCat.getElementsByClassName("menu-item");
+            var visibleCount = 0;
+
+            for (var i = 0; i < items.length; i++) {
+                var name = items[i].getAttribute("data-name") || "";
+                var cat = items[i].getAttribute("data-cat") || "";
+                var ing = items[i].getAttribute("data-ing") || "";
+
+                if (name.includes(query) || cat.includes(query) || ing.includes(query)) {
+                    items[i].style.display = "block";
+                    visibleCount++;
+                } else {
+                    items[i].style.display = "none";
+                }
+            }
+
+            var noResults = document.getElementById("noResults");
+            if (visibleCount === 0) {
+                noResults.style.display = "block";
+            } else {
+                noResults.style.display = "none";
+            }
+        }
+
+        function showToast(message) {
+            var toast = document.getElementById("toastNotification");
+            toast.innerHTML = message;
+            toast.style.display = "block";
+            setTimeout(function() {
+                toast.style.display = "none";
+            }, 3000);
+        }
+
+        function quickAddToCart(formElement, event) {
+            event.preventDefault();
+            var formData = new FormData(formElement);
+            fetch("{% url 'add_to_cart' %}", {
+                method: "POST",
+                body: formData,
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest"
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'login_required') {
+                    window.location.href = data.redirect_url;
+                } else if (data.status === 'ok') {
+                    var badge = document.getElementById("cartBadge");
+                    if (badge) badge.innerText = data.cart_count;
+                    showToast("🍨 Added <strong>" + data.item_name + "</strong> to your cart!");
+                }
+            })
+            .catch(err => console.error(err));
+        }
+
+        function toggleProfileDrawer() {
+            var drawer = document.getElementById("profileDrawer");
+            var overlay = document.getElementById("drawerOverlay");
+            drawer.classList.toggle("active");
+            overlay.classList.toggle("active");
+        }
+
+        function toggleMyOrdersAccordion() {
+            var accordion = document.getElementById("myOrdersAccordion");
+            if (accordion) {
+                accordion.style.display = (accordion.style.display === "none" || accordion.style.display === "") ? "block" : "none";
+            }
+        }
+    </script>
+</body>
+</html>

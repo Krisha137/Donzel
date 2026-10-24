@@ -1,0 +1,27 @@
+﻿# Virtual Environments
+venv/
+.venv/
+env/
+ENV/
+
+# Secrets & Environment Variables
+.env
+*.env
+!.env.example
+
+# Byte-compiled / cache files
+__pycache__/
+*.py[cod]
+*.class
+*.pyc
+
+# IDE & Editor folders
+.vscode/
+.idea/
+*.swp
+*~
+
+# OS files
+Thumbs.db
+Desktop.ini
+.DS_Store

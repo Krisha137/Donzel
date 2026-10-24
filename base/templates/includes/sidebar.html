@@ -1,0 +1,340 @@
+<!-- Overlay & Slide-Out Sidebar Drawer -->
+<div id="drawerOverlay" class="drawer-overlay" onclick="toggleProfileDrawer()"></div>
+<div id="profileDrawer" class="profile-drawer">
+    <div>
+        <div class="drawer-header">
+            <span class="drawer-title">Donzel Navigation</span>
+            <button class="drawer-close-btn" onclick="toggleProfileDrawer()">&times;</button>
+        </div>
+
+        {% if not user.is_authenticated %}
+        <!-- Distinct Luxury Guest Auth Card -->
+        <div style="background: linear-gradient(135deg, rgba(26, 22, 16, 0.95), rgba(16, 16, 22, 0.95)); border: 1.5px solid var(--primary-gold); border-radius: 14px; padding: 20px 16px; margin-bottom: 20px; text-align: center; box-shadow: 0 8px 25px rgba(0,0,0,0.6); position: relative; overflow: hidden;">
+            <div style="position: absolute; top: -30px; right: -30px; width: 90px; height: 90px; background: radial-gradient(circle, rgba(197,168,128,0.2) 0%, rgba(0,0,0,0) 70%); pointer-events: none;"></div>
+            
+            <div style="width: 48px; height: 48px; border-radius: 50%; background: rgba(197, 168, 128, 0.15); border: 1px solid var(--primary-gold); color: var(--primary-gold); font-size: 22px; display: flex; align-items: center; justify-content: center; margin: 0 auto 10px auto; box-shadow: 0 0 15px rgba(197, 168, 128, 0.2);">
+                👤
+            </div>
+            
+            <h4 style="color: #fff; font-size: 18px; font-family: 'Cormorant Garamond', serif; letter-spacing: 1px; margin-bottom: 4px;">Welcome to Donzel</h4>
+            <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 16px; line-height: 1.4;">Sign in to access your digital wallet and order history!</p>
+            
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+                <a href="{% url 'signup' %}" style="display: flex; align-items: center; justify-content: center; gap: 8px; background: linear-gradient(135deg, #c5a880 0%, #a88b62 100%); color: #111; font-weight: 800; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; padding: 12px; border-radius: 8px; text-decoration: none; box-shadow: 0 4px 15px rgba(197, 168, 128, 0.35); transition: all 0.2s ease;">
+                    <span>✨</span> Create Account
+                </a>
+                <a href="{% url 'login' %}" style="display: flex; align-items: center; justify-content: center; gap: 8px; background: rgba(255, 255, 255, 0.04); border: 1.5px solid rgba(197, 168, 128, 0.5); color: var(--primary-gold); font-weight: 700; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; padding: 11px; border-radius: 8px; text-decoration: none; transition: all 0.2s ease;">
+                    <span>🔑</span> Log In to Account
+                </a>
+            </div>
+        </div>
+        {% endif %}
+
+        <ul class="drawer-nav-list">
+            {% if user.is_authenticated %}
+            <!-- OPTION 1: About User & Wallet (Collapsible Accordion) -->
+            <li>
+                <a href="javascript:void(0)" onclick="toggleAboutUserAccordion()" style="display: flex; align-items: center; justify-content: space-between; font-weight: 700; border: 1px solid rgba(197, 168, 128, 0.4); background: rgba(197, 168, 128, 0.12); color: var(--primary-gold);">
+                    <span><span>👤</span> About User & Wallet</span>
+                    <span style="font-size: 11px; background: var(--primary-gold); color: #111; padding: 2px 8px; border-radius: 10px; font-weight: bold;">
+                        ₹{{ user_wallet.balance|default:"0.00" }} ▾
+                    </span>
+                </a>
+                
+                <!-- Collapsible User Details & Wallet Container -->
+                <div id="aboutUserAccordion" style="display: none; margin: 10px 0; background: linear-gradient(135deg, rgba(26, 29, 41, 0.95), rgba(18, 18, 18, 0.95)); border: 1px solid rgba(197, 168, 128, 0.3); border-radius: 12px; padding: 14px;">
+                    
+                    <!-- Wallet Virtual Card Banner -->
+                    <div style="background: linear-gradient(135deg, rgba(197, 168, 128, 0.25) 0%, rgba(20, 20, 20, 0.95) 100%); border: 1px solid rgba(197, 168, 128, 0.4); border-radius: 10px; padding: 12px; margin-bottom: 12px; position: relative; overflow: hidden;">
+                        <div style="font-size: 10px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--primary-gold); font-weight: 700; margin-bottom: 4px;">🍨 Donzel Digital Pass</div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                            <div style="width: 28px; height: 20px; background: linear-gradient(135deg, #e6c887, #b88d3b); border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 8px; color: #000; font-weight: bold; border: 1px solid #ffea9f;">💳</div>
+                            <div style="font-family: monospace; font-size: 11px; color: rgba(255,255,255,0.75); letter-spacing: 2px;">•••• {{ user.id|stringformat:"04d" }}</div>
+                        </div>
+
+                        <!-- Balance & Add Money Button -->
+                        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 12px;">
+                            <div>
+                                <div style="font-size: 9px; color: #bbb; text-transform: uppercase; letter-spacing: 1px;">Available Balance</div>
+                                <div style="font-size: 24px; font-weight: 700; color: #fff; font-family: 'Cormorant Garamond', serif; line-height: 1;">₹{{ user_wallet.balance|default:"0.00" }}</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- User Basic Details -->
+                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 10px;">
+                        <div class="user-avatar-circle" style="width: 38px; height: 38px; font-size: 16px;">{{ user.username|slice:":1"|upper }}</div>
+                        <div>
+                            <div style="font-size: 14px; font-weight: 700; color: #fff;">{{ user.username }}</div>
+                            <div style="font-size: 11px; color: var(--text-muted);">📧 {{ user.email|default:"donzel@gmail.com" }}</div>
+                            {% if user_profile.phone %}<div style="font-size: 11px; color: var(--text-muted);">📞 {{ user_profile.phone }}</div>{% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Saved Delivery Address Card -->
+                    <div style="background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(197, 168, 128, 0.2); border-radius: 8px; padding: 10px; margin-bottom: 12px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; font-size: 10px; font-weight: 700; color: var(--primary-gold); text-transform: uppercase; margin-bottom: 4px;">
+                            <span>📍 Saved Delivery Address</span>
+                            <button onclick="openEditAddressModal()" style="background: transparent; border: none; color: #fff; cursor: pointer; text-decoration: underline; font-size: 10px;">✏️ Edit</button>
+                        </div>
+                        <div style="font-size: 11px; color: #ddd; line-height: 1.3;">
+                            {{ user_profile.full_address }}
+                        </div>
+                    </div>
+
+                    <!-- Premium Metallic Digital Wallet Card -->
+                    <div style="background: linear-gradient(135deg, #181510 0%, #2e2417 50%, #17140f 100%); border: 1.5px solid var(--primary-gold); border-radius: 14px; padding: 16px; color: #fff; box-shadow: 0 10px 25px rgba(0,0,0,0.6); position: relative; overflow: hidden;">
+                        <div style="position: absolute; top: -30px; right: -30px; width: 100px; height: 100px; background: radial-gradient(circle, rgba(197,168,128,0.25) 0%, rgba(0,0,0,0) 70%); pointer-events: none;"></div>
+
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                            <div style="display: flex; align-items: center; gap: 6px;">
+                                <span style="font-size: 16px;">💳</span>
+                                <span style="font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--primary-gold); font-weight: 800;">Donzel Digital Wallet</span>
+                            </div>
+                            <span style="font-size: 9px; background: rgba(197, 168, 128, 0.2); color: var(--primary-gold); padding: 2px 6px; border-radius: 4px; font-weight: 700; border: 1px solid rgba(197,168,128,0.3);">Sub-Zero Pay</span>
+                        </div>
+
+                        <!-- Card Chip & Card Number -->
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                            <div style="width: 28px; height: 20px; background: linear-gradient(135deg, #e6c887, #b88d3b); border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 8px; color: #000; font-weight: bold; border: 1px solid #ffea9f;">💳</div>
+                            <div style="font-family: monospace; font-size: 11px; color: rgba(255,255,255,0.75); letter-spacing: 2px;">•••• {{ user.id|stringformat:"04d" }}</div>
+                        </div>
+
+                        <!-- Balance & Add Money Button -->
+                        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 12px;">
+                            <div>
+                                <div style="font-size: 9px; color: #bbb; text-transform: uppercase; letter-spacing: 1px;">Available Balance</div>
+                                <div style="font-size: 24px; font-weight: 700; color: #fff; font-family: 'Cormorant Garamond', serif; line-height: 1;">₹{{ user_wallet.balance|default:"500.00" }}</div>
+                            </div>
+                            <button onclick="openAddWalletModal()" style="background: var(--primary-gold); color: #111; border: none; padding: 6px 14px; border-radius: 16px; font-size: 10px; font-weight: 800; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 4px 12px rgba(197, 168, 128, 0.4);">
+                                ➕ Add Money
+                            </button>
+                        </div>
+
+                        <!-- View Transaction History Trigger Button (Not direct display!) -->
+                        <div style="border-top: 1px dashed rgba(197, 168, 128, 0.3); padding-top: 10px; margin-top: 8px;">
+                            <button onclick="openWalletHistoryModal()" style="width: 100%; background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(197, 168, 128, 0.3); color: var(--primary-gold); padding: 8px 10px; border-radius: 8px; font-size: 11px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: space-between; transition: all 0.2s ease;" onmouseover="this.style.borderColor='var(--primary-gold)';" onmouseout="this.style.borderColor='rgba(197, 168, 128, 0.3)';">
+                                <span>📜 View Transaction History</span>
+                                <span style="background: rgba(197, 168, 128, 0.2); color: #fff; padding: 2px 7px; border-radius: 10px; font-size: 9px; font-weight: bold;">
+                                    {{ wallet_transactions|length }} Logs ↗
+                                </span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </li>
+
+            <!-- OPTION 2: My Past Orders -->
+            <li>
+                <a href="javascript:void(0)" onclick="toggleMyOrdersAccordion()" style="display: flex; align-items: center; justify-content: space-between;">
+                    <span><span>📦</span> My Past Orders</span>
+                    <span style="font-size: 11px; background: rgba(197, 168, 128, 0.2); color: var(--primary-gold); padding: 2px 8px; border-radius: 10px; font-weight: bold;">
+                        {{ user_orders|length }} ▾
+                    </span>
+                </a>
+                
+                <div id="myOrdersAccordion" style="display: none; margin: 10px 0; background: rgba(0, 0, 0, 0.5); border: 1px solid rgba(197, 168, 128, 0.25); border-radius: 10px; padding: 12px; max-height: 240px; overflow-y: auto;">
+                    {% if user_orders %}
+                        {% for past_order in user_orders %}
+                        <div style="background: rgba(22, 22, 22, 0.9); border: 1px solid rgba(197, 168, 128, 0.2); border-radius: 8px; padding: 10px; margin-bottom: 10px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; font-size: 12px; font-weight: 600; margin-bottom: 4px;">
+                                <a href="{% url 'order_success' order_id=past_order.id %}" style="color: var(--primary-gold); text-decoration: none; font-weight: 700;">Order Token #{{ past_order.id|stringformat:"04d" }} ↗</a>
+                                <span style="color: var(--primary-gold);">₹{{ past_order.total_price }}</span>
+                            </div>
+                            <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center;">
+                                <span>{{ past_order.created_at|date:"d M, H:i" }}</span>
+                                <span style="color: #2ecc71; font-weight: 600;">{{ past_order.payment_status }}</span>
+                            </div>
+                            {% if past_order.delivery_address %}
+                                <div style="font-size: 10px; color: #aaa; margin-bottom: 4px;">📍 {{ past_order.delivery_address }}</div>
+                            {% endif %}
+                            <div style="font-size: 11px; color: #bbb; border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 6px;">
+                                {% for item in past_order.items.all %}
+                                    <div>• {{ item.quantity }}x {{ item.item_name }} (₹{{ item.price }})</div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <p style="font-size: 12px; color: var(--text-muted); text-align: center;">No previous orders found.</p>
+                    {% endif %}
+                </div>
+            </li>
+            {% endif %}
+
+            <li><a href="{% url 'menu' %}"><span>📜</span> Ice Cream & Dessert Menu</a></li>
+            <li><a href="{% url 'customizer' %}"><span>🍨</span> Sundae Customizer Studio</a></li>
+            <li><a href="{% url 'about' %}"><span>📖</span> About Session / Craft</a></li>
+            <li><a href="{% url 'home' %}#specials"><span>✨</span> Special Masterpieces</a></li>
+            {% if user.is_staff or user.is_superuser %}
+                <li><a href="/admin/" target="_blank"><span>⚙️</span> Django System Admin</a></li>
+            {% endif %}
+        </ul>
+    </div>
+
+    {% if user.is_authenticated %}
+        <a href="{% url 'logout' %}" class="drawer-logout-btn">
+            <span>🚪</span> Logout
+        </a>
+    {% endif %}
+</div>
+
+<!-- Edit Delivery Address Modal Dialog -->
+<div id="editAddressModal" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); z-index: 3000; align-items: center; justify-content: center;">
+    <div style="background: #161822; border: 1px solid var(--primary-gold); border-radius: 16px; padding: 30px; width: 90%; max-width: 480px; box-shadow: 0 15px 40px rgba(0,0,0,0.9);">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(197,168,128,0.3); padding-bottom: 12px; margin-bottom: 20px;">
+            <h3 style="color: var(--primary-gold); font-size: 20px;">📍 Edit Delivery Address</h3>
+            <button onclick="closeEditAddressModal()" style="background: none; border: none; color: #aaa; font-size: 24px; cursor: pointer;">&times;</button>
+        </div>
+
+        <form method="POST" action="{% url 'update_profile' %}">
+            {% csrf_token %}
+            <div style="margin-bottom: 12px;">
+                <label style="display: block; font-size: 11px; font-weight: bold; color: var(--primary-gold); text-transform: uppercase; margin-bottom: 4px;">Phone Number</label>
+                <input type="text" name="phone" value="{{ user_profile.phone|default:'' }}" style="width: 100%; padding: 10px; background: rgba(255,255,255,0.05); border: 1px solid rgba(197,168,128,0.3); border-radius: 8px; color: #fff; font-size: 13px;" required>
+            </div>
+            <div style="margin-bottom: 12px;">
+                <label style="display: block; font-size: 11px; font-weight: bold; color: var(--primary-gold); text-transform: uppercase; margin-bottom: 4px;">House / Flat / Bldg No.</label>
+                <input type="text" name="house_no" value="{{ user_profile.house_no|default:'' }}" style="width: 100%; padding: 10px; background: rgba(255,255,255,0.05); border: 1px solid rgba(197,168,128,0.3); border-radius: 8px; color: #fff; font-size: 13px;" required>
+            </div>
+            <div style="margin-bottom: 12px;">
+                <label style="display: block; font-size: 11px; font-weight: bold; color: var(--primary-gold); text-transform: uppercase; margin-bottom: 4px;">Street / Area / Locality</label>
+                <input type="text" name="street_area" value="{{ user_profile.street_area|default:'' }}" style="width: 100%; padding: 10px; background: rgba(255,255,255,0.05); border: 1px solid rgba(197,168,128,0.3); border-radius: 8px; color: #fff; font-size: 13px;" required>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px;">
+                <div>
+                    <label style="display: block; font-size: 11px; font-weight: bold; color: var(--primary-gold); text-transform: uppercase; margin-bottom: 4px;">City</label>
+                    <input type="text" name="city" value="{{ user_profile.city|default:'Ahmedabad' }}" style="width: 100%; padding: 10px; background: rgba(255,255,255,0.05); border: 1px solid rgba(197,168,128,0.3); border-radius: 8px; color: #fff; font-size: 13px;" required>
+                </div>
+                <div>
+                    <label style="display: block; font-size: 11px; font-weight: bold; color: var(--primary-gold); text-transform: uppercase; margin-bottom: 4px;">Pincode</label>
+                    <input type="text" name="pincode" value="{{ user_profile.pincode|default:'' }}" style="width: 100%; padding: 10px; background: rgba(255,255,255,0.05); border: 1px solid rgba(197,168,128,0.3); border-radius: 8px; color: #fff; font-size: 13px;" required>
+                </div>
+            </div>
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; font-size: 11px; font-weight: bold; color: var(--primary-gold); text-transform: uppercase; margin-bottom: 4px;">Landmark (Optional)</label>
+                <input type="text" name="landmark" value="{{ user_profile.landmark|default:'' }}" style="width: 100%; padding: 10px; background: rgba(255,255,255,0.05); border: 1px solid rgba(197,168,128,0.3); border-radius: 8px; color: #fff; font-size: 13px;">
+            </div>
+            <button type="submit" style="width: 100%; background: var(--primary-gold); color: #111; font-weight: bold; border: none; padding: 12px; border-radius: 8px; font-size: 13px; text-transform: uppercase; cursor: pointer;">Save Address Updates</button>
+        </form>
+    </div>
+</div>
+
+<!-- Add Money to Wallet Modal Dialog -->
+<div id="addWalletModal" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); z-index: 3000; align-items: center; justify-content: center;">
+    <div style="background: #161822; border: 1px solid var(--primary-gold); border-radius: 16px; padding: 30px; width: 90%; max-width: 440px; box-shadow: 0 15px 40px rgba(0,0,0,0.9); text-align: center;">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(197,168,128,0.3); padding-bottom: 12px; margin-bottom: 20px;">
+            <h3 style="color: var(--primary-gold); font-size: 20px;">💳 Top Up Donzel Wallet</h3>
+            <button onclick="closeAddWalletModal()" style="background: none; border: none; color: #aaa; font-size: 24px; cursor: pointer;">&times;</button>
+        </div>
+
+        <form method="POST" action="{% url 'add_wallet_money' %}">
+            {% csrf_token %}
+            <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 15px;">Select amount or enter custom top-up:</div>
+            
+            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 16px;">
+                <button type="button" onclick="setWalletAmount(200)" style="background: rgba(197,168,128,0.15); border: 1px solid var(--primary-gold); color: var(--primary-gold); padding: 8px 4px; border-radius: 8px; font-weight: bold; cursor: pointer;">+₹200</button>
+                <button type="button" onclick="setWalletAmount(500)" style="background: rgba(197,168,128,0.15); border: 1px solid var(--primary-gold); color: var(--primary-gold); padding: 8px 4px; border-radius: 8px; font-weight: bold; cursor: pointer;">+₹500</button>
+                <button type="button" onclick="setWalletAmount(1000)" style="background: rgba(197,168,128,0.15); border: 1px solid var(--primary-gold); color: var(--primary-gold); padding: 8px 4px; border-radius: 8px; font-weight: bold; cursor: pointer;">+₹1000</button>
+                <button type="button" onclick="setWalletAmount(2000)" style="background: rgba(197,168,128,0.15); border: 1px solid var(--primary-gold); color: var(--primary-gold); padding: 8px 4px; border-radius: 8px; font-weight: bold; cursor: pointer;">+₹2000</button>
+            </div>
+
+            <div style="margin-bottom: 20px;">
+                <input type="number" id="walletAmountInput" name="amount" placeholder="Enter custom amount (₹)" min="10" style="width: 100%; padding: 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(197,168,128,0.3); border-radius: 8px; color: #fff; font-size: 16px; font-weight: bold; text-align: center;" required>
+            </div>
+
+            <button type="submit" style="width: 100%; background: var(--primary-gold); color: #111; font-weight: bold; border: none; padding: 14px; border-radius: 8px; font-size: 13px; text-transform: uppercase; cursor: pointer; box-shadow: 0 4px 15px rgba(197,168,128,0.4);">
+                ⚡ Add Funds to Wallet Now
+            </button>
+        </form>
+    </div>
+</div>
+
+<!-- Wallet Transaction History Modal Dialog -->
+<div id="walletHistoryModal" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); z-index: 3000; align-items: center; justify-content: center;">
+    <div style="background: #161822; border: 1px solid var(--primary-gold); border-radius: 16px; padding: 30px; width: 90%; max-width: 520px; box-shadow: 0 15px 40px rgba(0,0,0,0.9);">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(197,168,128,0.3); padding-bottom: 12px; margin-bottom: 20px;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="font-size: 20px;">📜</span>
+                <h3 style="color: var(--primary-gold); font-size: 20px; font-family: 'Cormorant Garamond', serif; text-transform: uppercase; letter-spacing: 1px;">Wallet Transaction History</h3>
+            </div>
+            <button onclick="closeWalletHistoryModal()" style="background: none; border: none; color: #aaa; font-size: 24px; cursor: pointer;">&times;</button>
+        </div>
+
+        <div style="max-height: 320px; overflow-y: auto; padding-right: 5px;">
+            {% if wallet_transactions %}
+                {% for tx in wallet_transactions %}
+                <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(197,168,128,0.2); border-radius: 10px; padding: 12px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <div style="font-size: 13px; font-weight: 700; color: #fff;">{{ tx.description }}</div>
+                        <div style="font-size: 10px; color: var(--text-muted); margin-top: 2px;">🕒 {{ tx.created_at|date:"d M Y, h:i A" }}</div>
+                    </div>
+                    <div style="text-align: right;">
+                        <div style="font-size: 15px; font-weight: 800; {% if tx.transaction_type == 'CREDIT' %}color: #2ecc71;{% else %}color: #ff6b6b;{% endif %}">
+                            {% if tx.transaction_type == 'CREDIT' %}+{% else %}-{% endif %}₹{{ tx.amount }}
+                        </div>
+                        <span style="font-size: 9px; text-transform: uppercase; padding: 2px 6px; border-radius: 4px; font-weight: bold; {% if tx.transaction_type == 'CREDIT' %}background: rgba(46, 204, 113, 0.15); color: #2ecc71;{% else %}background: rgba(255, 107, 107, 0.15); color: #ff6b6b;{% endif %}">
+                            {{ tx.transaction_type }}
+                        </span>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div style="text-align: center; padding: 40px 0; color: var(--text-muted);">
+                    <div style="font-size: 32px; margin-bottom: 8px;">💳</div>
+                    <div style="font-size: 14px;">No transaction logs found yet.</div>
+                </div>
+            {% endif %}
+        </div>
+
+        <button onclick="closeWalletHistoryModal()" style="width: 100%; margin-top: 15px; background: rgba(197,168,128,0.15); border: 1px solid var(--primary-gold); color: var(--primary-gold); padding: 10px; border-radius: 8px; font-size: 12px; font-weight: bold; cursor: pointer;">
+            Close History Window
+        </button>
+    </div>
+</div>
+
+<!-- JS for Drawer, Accordions & Modals -->
+<script>
+    function toggleProfileDrawer() {
+        var drawer = document.getElementById("profileDrawer");
+        var overlay = document.getElementById("drawerOverlay");
+        drawer.classList.toggle("active");
+        overlay.classList.toggle("active");
+    }
+
+    function toggleAboutUserAccordion() {
+        var accordion = document.getElementById("aboutUserAccordion");
+        if (accordion) {
+            accordion.style.display = (accordion.style.display === "none" || accordion.style.display === "") ? "block" : "none";
+        }
+    }
+
+    function toggleMyOrdersAccordion() {
+        var accordion = document.getElementById("myOrdersAccordion");
+        if (accordion) {
+            accordion.style.display = (accordion.style.display === "none" || accordion.style.display === "") ? "block" : "none";
+        }
+    }
+
+    function openEditAddressModal() {
+        document.getElementById('editAddressModal').style.display = 'flex';
+    }
+    function closeEditAddressModal() {
+        document.getElementById('editAddressModal').style.display = 'none';
+    }
+    function openAddWalletModal() {
+        document.getElementById('addWalletModal').style.display = 'flex';
+    }
+    function closeAddWalletModal() {
+        document.getElementById('addWalletModal').style.display = 'none';
+    }
+    function openWalletHistoryModal() {
+        document.getElementById('walletHistoryModal').style.display = 'flex';
+    }
+    function closeWalletHistoryModal() {
+        document.getElementById('walletHistoryModal').style.display = 'none';
+    }
+    function setWalletAmount(amt) {
+        document.getElementById('walletAmountInput').value = amt;
+    }
+</script>

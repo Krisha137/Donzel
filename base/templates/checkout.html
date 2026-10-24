@@ -1,0 +1,453 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Express Checkout & Bill | Donzel Artisanal Ice Cream Parlour</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-gold: #c5a880;
+            --dark-bg: #0b0c10;
+            --surface-bg: #14161d;
+            --card-bg: #1a1d29;
+            --text-light: #f8f9fa;
+            --text-muted: #a0a5b5;
+            --border-color: rgba(197, 168, 128, 0.25);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Montserrat', sans-serif; background-color: var(--dark-bg); color: var(--text-light); line-height: 1.6; min-height: 100vh; display: flex; flex-direction: column; justify-content: space-between; }
+        h1, h2, h3, h4 { font-family: 'Cormorant Garamond', serif; letter-spacing: 1px; }
+        .container { max-width: 1150px; margin: 0 auto; padding: 0 20px; width: 100%; }
+
+        /* Clean Navbar */
+        .navbar {
+            position: fixed; top: 0; left: 0; width: 100%; height: 70px; z-index: 1000;
+            background: rgba(13, 13, 13, 0.95); backdrop-filter: blur(16px); border-bottom: 1px solid rgba(197, 168, 128, 0.2);
+            display: flex; align-items: center;
+        }
+        .nav-container { display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+        .logo { font-size: 24px; color: var(--primary-gold); text-decoration: none; text-transform: uppercase; font-weight: 700; font-family: 'Cormorant Garamond', serif; display: flex; align-items: center; gap: 8px; }
+        .nav-right-group { display: flex; align-items: center; gap: 20px; }
+        .nav-link-item { color: var(--text-light); text-decoration: none; font-size: 12px; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 600; }
+        .nav-link-item:hover, .nav-link-item.active { color: var(--primary-gold); }
+
+        .cart-pill { display: inline-flex; align-items: center; gap: 8px; background: rgba(197, 168, 128, 0.1); border: 1px solid rgba(197, 168, 128, 0.3); padding: 6px 14px; border-radius: 20px; color: var(--primary-gold); text-decoration: none; font-size: 12px; font-weight: 600; }
+        .cart-count-badge { background: var(--primary-gold); color: #111; font-size: 11px; font-weight: 700; border-radius: 10px; padding: 2px 7px; }
+
+        .profile-trigger-btn { background: rgba(197, 168, 128, 0.1); border: 1px solid rgba(197, 168, 128, 0.3); color: var(--primary-gold); padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; }
+
+        /* Slide-Out Profile Drawer Sidebar */
+        .drawer-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(4px); z-index: 2000; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
+        .drawer-overlay.active { opacity: 1; pointer-events: auto; }
+
+        .profile-drawer { position: fixed; top: 0; right: -420px; width: 380px; max-width: 90vw; height: 100vh; background: #121212; border-left: 1px solid rgba(197, 168, 128, 0.25); z-index: 2001; transition: right 0.3s cubic-bezier(0.16, 1, 0.3, 1); display: flex; flex-direction: column; justify-content: space-between; padding: 25px 20px; box-shadow: -10px 0 30px rgba(0,0,0,0.8); overflow-y: auto; }
+        .profile-drawer.active { right: 0; }
+
+        .drawer-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 18px; margin-bottom: 25px; }
+        .drawer-title { font-size: 20px; color: var(--primary-gold); font-family: 'Cormorant Garamond', serif; text-transform: uppercase; letter-spacing: 1.5px; }
+        .drawer-close-btn { background: none; border: none; color: var(--text-muted); font-size: 24px; cursor: pointer; }
+
+        .drawer-nav-list { list-style: none; display: flex; flex-direction: column; gap: 12px; flex-grow: 1; }
+        .drawer-nav-list a { display: flex; align-items: center; gap: 12px; color: #d1d1d1; text-decoration: none; font-size: 13px; text-transform: uppercase; letter-spacing: 1.5px; padding: 10px 14px; border-radius: 4px; transition: all 0.2s ease; background: rgba(255,255,255,0.02); border: 1px solid transparent; }
+        .drawer-nav-list a:hover { background: rgba(197, 168, 128, 0.1); border-color: rgba(197, 168, 128, 0.3); color: var(--primary-gold); }
+
+        .drawer-logout-btn { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; padding: 12px; background: rgba(217, 83, 79, 0.1); border: 1px solid #d9534f; color: #d9534f; text-decoration: none; font-size: 12px; text-transform: uppercase; letter-spacing: 2px; font-weight: 600; border-radius: 4px; transition: all 0.3s ease; margin-top: 20px; }
+        .drawer-logout-btn:hover { background: #d9534f; color: #fff; }
+
+        /* Form Controls */
+        .form-group { margin-bottom: 20px; }
+        .form-label { display: block; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: var(--primary-gold); margin-bottom: 8px; }
+        .form-input { width: 100%; padding: 14px 18px; background: rgba(255,255,255,0.03); border: 1px solid var(--border-color); border-radius: 10px; color: #fff; font-size: 14px; font-family: 'Montserrat', sans-serif; transition: all 0.3s ease; outline: none; }
+        .form-input:focus { border-color: var(--primary-gold); background: rgba(255,255,255,0.06); box-shadow: 0 0 15px rgba(197, 168, 128, 0.2); }
+
+        .form-select {
+            width: 100%;
+            padding: 14px 18px;
+            background: #14161d;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            color: #fff;
+            font-size: 14px;
+            font-family: 'Montserrat', sans-serif;
+            transition: all 0.3s ease;
+            outline: none;
+            cursor: pointer;
+        }
+        .form-select:focus {
+            border-color: var(--primary-gold);
+            box-shadow: 0 0 15px rgba(197, 168, 128, 0.2);
+        }
+        .form-select option {
+            background: #14161d;
+            color: #fff;
+        }
+
+        /* Page Layout */
+        .page-header { padding: 140px 0 45px 0; background: linear-gradient(rgba(11,12,16,0.88), rgba(11,12,16,0.95)), url('{% static "images/hero3_bg.png" %}') no-repeat center center/cover; text-align: center; border-bottom: 1px solid var(--border-color); }
+        .page-header h1 { font-size: 52px; color: var(--primary-gold); margin-bottom: 10px; }
+
+        .checkout-section { padding: 60px 0 90px 0; flex: 1; }
+        .checkout-grid { display: grid; grid-template-columns: 1fr 400px; gap: 40px; }
+
+        .checkout-card { background: var(--surface-bg); border: 1px solid var(--border-color); border-radius: 16px; padding: 30px; }
+
+        .order-summary-item { display: flex; justify-content: space-between; font-size: 14px; color: #ccc; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px dashed rgba(255,255,255,0.1); }
+        .total-box { display: flex; justify-content: space-between; font-size: 24px; font-weight: 700; color: var(--primary-gold); border-top: 1px solid var(--border-color); padding-top: 15px; margin-top: 15px; font-family: 'Cormorant Garamond', serif; }
+
+        /* Button & Bill Card Styling */
+        .btn-submit, .btn-proceed {
+            width: 100%;
+            background: linear-gradient(135deg, #c5a880 0%, #a88b62 100%);
+            color: #111;
+            border: none;
+            padding: 16px 20px;
+            border-radius: 10px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 20px rgba(197, 168, 128, 0.4);
+            margin-top: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        .btn-submit:hover, .btn-proceed:hover {
+            background: linear-gradient(135deg, #d4b68e 0%, #c5a880 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(197, 168, 128, 0.6);
+        }
+
+        .bill-card {
+            background: var(--surface-bg);
+            border: 1px solid var(--primary-gold);
+            border-radius: 16px;
+            padding: 30px;
+            position: sticky;
+            top: 100px;
+            box-shadow: 0 12px 35px rgba(0,0,0,0.7);
+        }
+        .bill-title {
+            font-size: 22px;
+            color: var(--primary-gold);
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 14px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-family: 'Cormorant Garamond', serif;
+        }
+        .bill-item-list {
+            list-style: none;
+            margin-bottom: 20px;
+            max-height: 260px;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+        .bill-item-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            color: var(--text-light);
+            margin-bottom: 12px;
+            border-bottom: 1px dashed rgba(255,255,255,0.08);
+            padding-bottom: 10px;
+        }
+        .bill-item-qty { color: var(--primary-gold); font-weight: 700; margin-right: 6px; }
+        .bill-item-name { font-weight: 500; }
+        .bill-item-price { font-weight: 600; color: #fff; }
+        .bill-calc-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+        .bill-total-box {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 24px;
+            font-weight: 700;
+            color: #fff;
+            border-top: 1px solid var(--border-color);
+            padding-top: 16px;
+            margin-top: 15px;
+            font-family: 'Cormorant Garamond', serif;
+        }
+
+        footer { background-color: #08090d; padding: 50px 0 25px 0; border-top: 1px solid var(--border-color); text-align: center; }
+    </style>
+</head>
+<body>
+
+    <!-- Minimal Navbar (Logo, Menu, Cart, Sidebar Button) -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="{% url 'home' %}" class="logo">
+                🍨 DONZEL
+            </a>
+
+            <div class="nav-right-group">
+                <a href="{% url 'menu' %}" class="nav-link-item">Menu</a>
+
+                <a href="{% url 'cart' %}" class="cart-pill" title="View Cart">
+                    <span>🛒 Cart</span>
+                    <span class="cart-count-badge">{{ cart_count }}</span>
+                </a>
+
+                <button class="profile-trigger-btn" onclick="toggleProfileDrawer()" title="Open Sidebar">
+                    <span>👤 {% if user.is_authenticated %}{{ user.username }}{% endif %}</span>
+                    <span style="font-size:14px; font-weight:bold;">⋯</span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    {% include 'includes/sidebar.html' %}
+
+    <!-- Header -->
+    <header class="page-header">
+        <div class="container">
+            <h1>Express Checkout & Order Summary</h1>
+            <p style="font-size: 16px; color: var(--text-muted);">Enter Your Email Address for Instant Order Receipt Dispatch</p>
+        </div>
+    </header>
+
+    <!-- 2-Column Checkout Section -->
+    <section class="checkout-section">
+        <div class="container">
+            <div class="checkout-grid">
+                
+                <!-- Left Column: Customer Form -->
+                <div class="checkout-card">
+                    <h3 style="font-size: 24px; color: var(--primary-gold); margin-bottom: 25px; border-bottom: 1px solid var(--border-color); padding-bottom: 12px;">Customer Details</h3>
+
+                    {% if error %}
+                        <div style="background: rgba(231, 76, 60, 0.2); border: 1px solid #e74c3c; color: #ff6b6b; padding: 14px; border-radius: 10px; margin-bottom: 20px; font-size: 13px; font-weight: 600;">
+                            {{ error }}
+                        </div>
+                    {% endif %}
+
+                    <form method="POST" action="{% url 'checkout' %}" id="checkoutForm" onsubmit="return handleCheckoutFormSubmit(event)">
+                        {% csrf_token %}
+                        
+                        <div class="form-group">
+                            <label class="form-label">Full Name *</label>
+                            <input type="text" id="custName" name="name" class="form-input" placeholder="e.g. Aarav Patel" value="{{ checkout_info.name|default:'' }}" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Email Address (For Order Receipt Dispatch) *</label>
+                            <input type="email" id="custEmail" name="email" class="form-input" placeholder="e.g. aarav.patel@gmail.com" value="{{ checkout_info.email|default:'' }}" required>
+                            <span style="font-size: 11px; color: var(--primary-gold); margin-top: 4px; display: block;">📧 An official order bill receipt will be sent to this email address.</span>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Mobile Phone *</label>
+                            <input type="tel" id="custPhone" name="phone" class="form-input" placeholder="e.g. 9876543210" value="{{ checkout_info.phone|default:'' }}" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Order Type *</label>
+                            <select name="order_type" id="orderTypeSelect" class="form-select" onchange="handleOrderTypeToggle(this.value)">
+                                <option value="dine_in" {% if checkout_info.order_type == 'dine_in' or not checkout_info.order_type %}selected{% endif %}>🍽️ Dine-In Parlour Table Service</option>
+                                <option value="takeaway" {% if checkout_info.order_type == 'takeaway' %}selected{% endif %}>🛍️ Takeaway Express Pickup</option>
+                            </select>
+                        </div>
+
+                        <!-- Dine-In Table Number Section -->
+                        <div class="form-group" id="tableGroup">
+                            <label class="form-label">Table Number *</label>
+                            <input type="text" id="tableNumberInput" name="table_number" class="form-input" placeholder="e.g. Table #4" value="{{ checkout_info.table_number|default:'' }}">
+                            <span style="font-size: 11px; color: var(--primary-gold); margin-top: 4px; display: block;">🍽️ Our parlour staff will serve your fresh order directly to your table.</span>
+                        </div>
+
+                        <!-- Takeaway Pickup Time Section -->
+                        <div class="form-group" id="pickupTimeGroup">
+                            <label class="form-label">Requested Pickup Time</label>
+                            <select name="pickup_time" class="form-select">
+                                <option value="15 mins" {% if checkout_info.pickup_time == '15 mins' %}selected{% endif %}>Ready in 15 Minutes</option>
+                                <option value="30 mins" {% if checkout_info.pickup_time == '30 mins' %}selected{% endif %}>Ready in 30 Minutes</option>
+                                <option value="45 mins" {% if checkout_info.pickup_time == '45 mins' %}selected{% endif %}>Ready in 45 Minutes</option>
+                            </select>
+                        </div>
+
+                        <!-- Optional Delivery Address Section (Hidden for Dine-In and Takeaway) -->
+                        <div id="deliveryAddressGroup" style="display: none; margin: 25px 0 15px 0; border-top: 1px solid var(--border-color); padding-top: 18px;">
+                            <h4 style="font-size: 18px; color: var(--primary-gold); margin-bottom: 15px; display: flex; align-items: center; gap: 8px;">
+                                📍 Delivery Address Details
+                            </h4>
+
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                                <div class="form-group">
+                                    <label class="form-label">House / Flat / Bldg No.</label>
+                                    <input type="text" id="houseNoInput" name="house_no" class="form-input" placeholder="e.g. A-402, Royal Residency" value="{{ checkout_info.house_no|default:'' }}">
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label">Street / Area / Locality</label>
+                                    <input type="text" id="streetAreaInput" name="street_area" class="form-input" placeholder="e.g. S.G. Highway, Bodakdev" value="{{ checkout_info.street_area|default:'' }}">
+                                </div>
+                            </div>
+
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                                <div class="form-group">
+                                    <label class="form-label">City</label>
+                                    <input type="text" id="cityInput" name="city" class="form-input" value="{{ checkout_info.city|default:'Ahmedabad' }}">
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label">Pincode</label>
+                                    <input type="text" id="pincodeInput" name="pincode" class="form-input" placeholder="e.g. 380054" value="{{ checkout_info.pincode|default:'' }}">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Landmark (Optional)</label>
+                                <input type="text" name="landmark" class="form-input" placeholder="e.g. Near LJ University Circle" value="{{ checkout_info.landmark|default:'' }}">
+                            </div>
+                        </div>
+
+                        <button type="submit" id="submitCheckoutBtn" class="btn-submit">Proceed to Payment Choice 💳</button>
+                    </form>
+                </div>
+
+                <!-- Right Column: Full Bill Summary Card -->
+                <div class="bill-card">
+                    <div class="bill-title">
+                        <span>📜 Order Bill Summary</span>
+                        <span style="font-size: 12px; color: var(--text-muted);">{{ cart_count }} Items</span>
+                    </div>
+
+                    <ul class="bill-item-list">
+                        {% for item in cart %}
+                        <li class="bill-item-row">
+                            <div>
+                                <span class="bill-item-qty">{{ item.quantity }}x</span>
+                                <span class="bill-item-name">{{ item.name }}</span>
+                            </div>
+                            <span class="bill-item-price">₹{% widthratio item.price 1 item.quantity %}</span>
+                        </li>
+                        {% endfor %}
+                    </ul>
+
+                    <div style="border-top: 1px solid var(--border-color); padding-top: 15px; margin-top: 10px;">
+                        <div class="bill-calc-row">
+                            <span>Subtotal</span>
+                            <span>₹{{ cart_subtotal }}</span>
+                        </div>
+                        <div class="bill-calc-row">
+                            <span>GST & Taxes (Included)</span>
+                            <span style="color: #2ecc71;">₹0.00</span>
+                        </div>
+                        <div class="bill-calc-row">
+                            <span>Chilled Packaging & Box</span>
+                            <span style="color: #2ecc71;">FREE</span>
+                        </div>
+
+                        <div class="bill-total-box">
+                            <span>Grand Total Bill:</span>
+                            <span style="color: var(--primary-gold);">₹{{ cart_subtotal }}</span>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 25px; padding: 14px; background: rgba(197, 168, 128, 0.1); border: 1px dashed var(--primary-gold); border-radius: 10px; font-size: 11px; color: var(--text-muted); text-align: center;">
+                        📧 Instant Email Confirmation Sent to Customer Email Address
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p style="font-size: 13px; color: var(--text-muted);">&copy; 2026 Donzel Artisanal Ice Cream Parlour. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        function handleOrderTypeToggle(val) {
+            var tableGroup = document.getElementById('tableGroup');
+            var tableInput = document.getElementById('tableNumberInput');
+            var pickupTimeGroup = document.getElementById('pickupTimeGroup');
+            var deliveryAddressGroup = document.getElementById('deliveryAddressGroup');
+
+            if (val === 'dine_in') {
+                if (tableGroup) tableGroup.style.display = 'block';
+                if (tableInput) tableInput.required = true;
+                if (pickupTimeGroup) pickupTimeGroup.style.display = 'none';
+                if (deliveryAddressGroup) deliveryAddressGroup.style.display = 'none';
+            } else if (val === 'takeaway') {
+                if (tableGroup) tableGroup.style.display = 'none';
+                if (tableInput) {
+                    tableInput.required = false;
+                    tableInput.value = '';
+                }
+                if (pickupTimeGroup) pickupTimeGroup.style.display = 'block';
+                if (deliveryAddressGroup) deliveryAddressGroup.style.display = 'none';
+            } else {
+                if (tableGroup) tableGroup.style.display = 'none';
+                if (tableInput) tableInput.required = false;
+                if (pickupTimeGroup) pickupTimeGroup.style.display = 'none';
+                if (deliveryAddressGroup) deliveryAddressGroup.style.display = 'block';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            var orderTypeSelect = document.getElementById('orderTypeSelect');
+            if (orderTypeSelect) {
+                handleOrderTypeToggle(orderTypeSelect.value);
+            }
+        });
+
+        function toggleProfileDrawer() {
+            var drawer = document.getElementById("profileDrawer");
+            var overlay = document.getElementById("drawerOverlay");
+            drawer.classList.toggle("active");
+            overlay.classList.toggle("active");
+        }
+
+        function toggleMyOrdersAccordion() {
+            var accordion = document.getElementById("myOrdersAccordion");
+            if (accordion) {
+                accordion.style.display = (accordion.style.display === "none" || accordion.style.display === "") ? "block" : "none";
+            }
+        }
+
+        function handleCheckoutFormSubmit(e) {
+            var form = document.getElementById('checkoutForm');
+            var orderType = form.elements['order_type'].value;
+            
+            if (orderType === 'dine_in') {
+                var tableNum = form.elements['table_number'].value.trim();
+                if (!tableNum) {
+                    alert('Please enter a Table Number for Dine-In orders.');
+                    return false;
+                }
+            }
+            
+            var btn = document.getElementById('submitCheckoutBtn');
+            if (btn) {
+                btn.innerHTML = '⚡ Navigating to Payment Page...';
+                btn.style.opacity = '0.75';
+                btn.style.pointerEvents = 'none';
+            }
+            return true;
+        }
+    </script>
+</body>
+</html>

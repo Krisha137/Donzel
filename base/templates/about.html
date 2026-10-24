@@ -1,0 +1,184 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Story | Donzel Artisanal Ice Cream Parlour</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-gold: #c5a880;
+            --dark-bg: #0b0c10;
+            --surface-bg: #14161d;
+            --text-light: #f8f9fa;
+            --text-muted: #a0a5b5;
+            --border-color: rgba(197, 168, 128, 0.25);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Montserrat', sans-serif; background-color: var(--dark-bg); color: var(--text-light); line-height: 1.6; min-height: 100vh; display: flex; flex-direction: column; justify-content: space-between; }
+        h1, h2, h3, h4 { font-family: 'Cormorant Garamond', serif; letter-spacing: 1px; }
+        .container { max-width: 1100px; margin: 0 auto; padding: 0 20px; width: 100%; }
+
+        /* Minimal Navbar (Logo, Menu, Cart, Sidebar Button) */
+        .navbar {
+            position: fixed; top: 0; left: 0; width: 100%; height: 70px; z-index: 1000;
+            background: rgba(13, 13, 13, 0.95); backdrop-filter: blur(16px); border-bottom: 1px solid rgba(197, 168, 128, 0.2);
+            display: flex; align-items: center;
+        }
+        .nav-container { display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+        .logo { font-size: 24px; color: var(--primary-gold); text-decoration: none; text-transform: uppercase; font-weight: 700; font-family: 'Cormorant Garamond', serif; display: flex; align-items: center; gap: 8px; }
+        .nav-right-group { display: flex; align-items: center; gap: 20px; }
+        .nav-link-item { color: var(--text-light); text-decoration: none; font-size: 12px; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 600; }
+        .nav-link-item:hover, .nav-link-item.active { color: var(--primary-gold); }
+
+        .cart-pill { display: inline-flex; align-items: center; gap: 8px; background: rgba(197, 168, 128, 0.1); border: 1px solid rgba(197, 168, 128, 0.3); padding: 6px 14px; border-radius: 20px; color: var(--primary-gold); text-decoration: none; font-size: 12px; font-weight: 600; }
+        .cart-count-badge { background: var(--primary-gold); color: #111; font-size: 11px; font-weight: 700; border-radius: 10px; padding: 2px 7px; }
+
+        .profile-trigger-btn { background: rgba(197, 168, 128, 0.1); border: 1px solid rgba(197, 168, 128, 0.3); color: var(--primary-gold); padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; }
+
+        /* Drawer Overlay & Panel Sidebar */
+        .drawer-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(4px); z-index: 2000; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
+        .drawer-overlay.active { opacity: 1; pointer-events: auto; }
+
+        .profile-drawer { position: fixed; top: 0; right: -420px; width: 380px; max-width: 90vw; height: 100vh; background: #121212; border-left: 1px solid rgba(197, 168, 128, 0.25); z-index: 2001; transition: right 0.3s cubic-bezier(0.16, 1, 0.3, 1); display: flex; flex-direction: column; justify-content: space-between; padding: 25px 20px; box-shadow: -10px 0 30px rgba(0,0,0,0.8); overflow-y: auto; }
+        .profile-drawer.active { right: 0; }
+
+        .drawer-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 18px; margin-bottom: 25px; }
+        .drawer-title { font-size: 20px; color: var(--primary-gold); font-family: 'Cormorant Garamond', serif; text-transform: uppercase; letter-spacing: 1.5px; }
+        .drawer-close-btn { background: none; border: none; color: var(--text-muted); font-size: 24px; cursor: pointer; }
+        .drawer-close-btn:hover { color: var(--primary-gold); }
+
+        .user-info-card { background: rgba(22, 22, 22, 0.8); border: 1px solid rgba(197, 168, 128, 0.2); border-radius: 8px; padding: 18px; margin-bottom: 25px; }
+        .user-info-header { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+        .user-avatar-circle { width: 42px; height: 42px; border-radius: 50%; background: rgba(197, 168, 128, 0.15); border: 1px solid var(--primary-gold); color: var(--primary-gold); display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: bold; }
+        .user-name-title { font-size: 16px; font-weight: 600; color: var(--text-light); }
+        .user-role-badge { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: var(--primary-gold); background: rgba(197, 168, 128, 0.1); padding: 2px 8px; border-radius: 10px; display: inline-block; }
+        .user-detail-line { font-size: 12px; color: var(--text-muted); margin-top: 6px; }
+
+        .drawer-nav-list { list-style: none; display: flex; flex-direction: column; gap: 12px; flex-grow: 1; }
+        .drawer-nav-list a { display: flex; align-items: center; gap: 12px; color: #d1d1d1; text-decoration: none; font-size: 13px; text-transform: uppercase; letter-spacing: 1.5px; padding: 10px 14px; border-radius: 4px; transition: all 0.2s ease; background: rgba(255,255,255,0.02); border: 1px solid transparent; }
+        .drawer-nav-list a:hover { background: rgba(197, 168, 128, 0.1); border-color: rgba(197, 168, 128, 0.3); color: var(--primary-gold); }
+
+        .drawer-logout-btn { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; padding: 12px; background: rgba(217, 83, 79, 0.1); border: 1px solid #d9534f; color: #d9534f; text-decoration: none; font-size: 12px; text-transform: uppercase; letter-spacing: 2px; font-weight: 600; border-radius: 4px; transition: all 0.3s ease; margin-top: 20px; }
+        .drawer-logout-btn:hover { background: #d9534f; color: #fff; }
+
+        .page-header {
+            padding: 150px 0 60px 0;
+            background: linear-gradient(rgba(11,12,16,0.85), rgba(11,12,16,0.95)), url('{% static "images/hero2_bg.jpg" %}') no-repeat center center/cover;
+            text-align: center;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .page-header h1 { font-size: 52px; color: var(--primary-gold); margin-bottom: 10px; }
+
+        .story-section { padding: 90px 0; }
+        .story-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 50px; align-items: center; }
+        .story-img { width: 100%; height: 400px; border-radius: 20px; object-fit: cover; border: 1px solid var(--border-color); box-shadow: 0 15px 35px rgba(0,0,0,0.6); }
+
+        .value-card { background: var(--surface-bg); border: 1px solid var(--border-color); border-radius: 16px; padding: 30px; text-align: center; }
+
+        footer { background-color: #08090d; padding: 50px 0 25px 0; border-top: 1px solid var(--border-color); text-align: center; }
+    </style>
+</head>
+<body>
+
+    <!-- Minimal Navbar (Logo, Menu, Cart, Sidebar Button) -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="{% url 'home' %}" class="logo">
+                🍨 DONZEL
+            </a>
+
+            <div class="nav-right-group">
+                <a href="{% url 'menu' %}" class="nav-link-item">Menu</a>
+
+                <a href="{% url 'cart' %}" class="cart-pill" title="View Cart">
+                    <span>🛒 Cart</span>
+                    <span class="cart-count-badge">{{ cart_count }}</span>
+                </a>
+
+                <button class="profile-trigger-btn" onclick="toggleProfileDrawer()" title="Open Sidebar">
+                    <span>👤 {% if user.is_authenticated %}{{ user.username }}{% endif %}</span>
+                    <span style="font-size:14px; font-weight:bold;">⋯</span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    {% include 'includes/sidebar.html' %}
+
+    <!-- Header -->
+    <header class="page-header">
+        <div class="container">
+            <h1>The Craft of Donzel</h1>
+            <p style="font-size: 16px; color: var(--text-muted); max-width: 650px; margin: 0 auto;">Sub-Zero Churned Gelato & Artisanal Cold Cocoa Boutique</p>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <section class="story-section">
+        <div class="container">
+            <div class="story-grid" style="margin-bottom: 80px;">
+                <div>
+                    <span style="color: var(--primary-gold); font-size: 12px; text-transform: uppercase; letter-spacing: 2px; font-weight: 700;">Sub-Zero Philosophy</span>
+                    <h2 style="font-size: 38px; color: #fff; margin: 10px 0 20px 0;">Pure Dairy, Zero Compromise</h2>
+                    <p style="color: var(--text-muted); line-height: 1.8; margin-bottom: 16px;">Donzel Artisanal Ice Cream Parlour was created to elevate frozen desserts into an exquisite culinary experience. We reject palm oil, vegetable fats, and artificial powders.</p>
+                    <p style="color: var(--text-muted); line-height: 1.8;">Our ice creams and gelatos are slow-churned in small batches using 100% pure A2 dairy cream, real Alphonso mango pulp, wild berries, and authentic 70% dark Belgian cocoa.</p>
+                </div>
+                <div>
+                    <img src="{% static 'images/cafe_interior.jpg' %}" alt="Donzel Parlour Interior" class="story-img">
+                </div>
+            </div>
+
+            <!-- 3 Pillars -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px;">
+                <div class="value-card">
+                    <div style="font-size: 40px; margin-bottom: 15px;">🥛</div>
+                    <h3 style="color: var(--primary-gold); font-size: 22px; margin-bottom: 10px;">100% Pure A2 Dairy</h3>
+                    <p style="font-size: 13px; color: var(--text-muted); line-height: 1.6;">Creamy, velvety texture achieved strictly through premium milk fats without any artificial thickeners.</p>
+                </div>
+
+                <div class="value-card">
+                    <div style="font-size: 40px; margin-bottom: 15px;">🍫</div>
+                    <h3 style="color: var(--primary-gold); font-size: 22px; margin-bottom: 10px;">Belgian Cocoa Beans</h3>
+                    <p style="font-size: 13px; color: var(--text-muted); line-height: 1.6;">Our famous DND Cold Cocoa uses single-origin dark cocoa nibs for a deep, lingering chocolate bliss.</p>
+                </div>
+
+                <div class="value-card">
+                    <div style="font-size: 40px; margin-bottom: 15px;">🌿</div>
+                    <h3 style="color: var(--primary-gold); font-size: 22px; margin-bottom: 10px;">100% Eggless Recipes</h3>
+                    <p style="font-size: 13px; color: var(--text-muted); line-height: 1.6;">Every single scoop, waffle cone, and fudgy brownie is 100% vegetarian and eggless.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p style="font-size: 13px; color: var(--text-muted);">&copy; 2026 Donzel Artisanal Ice Cream Parlour. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        function toggleProfileDrawer() {
+            var drawer = document.getElementById("profileDrawer");
+            var overlay = document.getElementById("drawerOverlay");
+            drawer.classList.toggle("active");
+            overlay.classList.toggle("active");
+        }
+
+        function toggleMyOrdersAccordion() {
+            var accordion = document.getElementById("myOrdersAccordion");
+            if (accordion) {
+                accordion.style.display = (accordion.style.display === "none" || accordion.style.display === "") ? "block" : "none";
+            }
+        }
+    </script>
+</body>
+</html>

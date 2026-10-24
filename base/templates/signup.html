@@ -1,0 +1,267 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Account & Donzel Wallet | Donzel Artisanal Ice Cream Parlour</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-gold: #c5a880;
+            --dark-bg: #0b0c10;
+            --surface-bg: #14161d;
+            --card-bg: #1a1d29;
+            --text-light: #f8f9fa;
+            --text-muted: #a0a5b5;
+            --border-color: rgba(197, 168, 128, 0.25);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: linear-gradient(rgba(11,12,16,0.85), rgba(11,12,16,0.92)), url('{% static "images/hero2_bg.jpg" %}') no-repeat center center/cover;
+            color: var(--text-light);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 30px 20px;
+        }
+
+        .auth-container {
+            width: 100%;
+            max-width: 540px;
+            background: rgba(20, 22, 29, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 40px 35px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.8);
+            text-align: center;
+        }
+
+        .auth-logo {
+            font-size: 28px;
+            color: var(--primary-gold);
+            font-family: 'Cormorant Garamond', serif;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 5px;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .auth-subtitle {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+        }
+
+        .form-grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .form-group {
+            text-align: left;
+            margin-bottom: 16px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-light);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 11px 14px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            color: #fff;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 13px;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus {
+            border-color: var(--primary-gold);
+            background: rgba(26, 29, 41, 0.9);
+            box-shadow: 0 0 15px rgba(197, 168, 128, 0.15);
+        }
+
+        .section-header-title {
+            font-size: 13px;
+            color: var(--primary-gold);
+            font-weight: 700;
+            text-align: left;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 6px;
+            margin: 20px 0 14px 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-auth-submit {
+            width: 100%;
+            background: var(--primary-gold);
+            color: #111;
+            border: none;
+            padding: 14px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 20px rgba(197, 168, 128, 0.35);
+            margin-top: 15px;
+        }
+
+        .btn-auth-submit:hover {
+            background: #d4b68e;
+            transform: translateY(-2px);
+        }
+
+        .auth-footer-link {
+            margin-top: 22px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .auth-footer-link a {
+            color: var(--primary-gold);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .error-alert {
+            background: rgba(231, 76, 60, 0.15);
+            border: 1px solid #e74c3c;
+            color: #ff6b6b;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 13px;
+            margin-bottom: 20px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="auth-container">
+        <a href="{% url 'home' %}" class="auth-logo">🍨 DONZEL</a>
+        <p class="auth-subtitle">Create Your Donzel Account & Activate Wallet</p>
+
+        <div style="background: rgba(197, 168, 128, 0.12); border: 1px dashed var(--primary-gold); padding: 12px 16px; border-radius: 12px; margin-bottom: 22px; font-size: 12px; color: var(--primary-gold); font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 8px;">
+            <span>💳</span>
+            <span>Sign up today to activate your Donzel digital account & wallet!</span>
+        </div>
+
+        {% if error %}
+            <div class="error-alert">
+                {{ error }}
+            </div>
+        {% endif %}
+
+        <form method="POST" action="{% url 'signup' %}">
+            {% csrf_token %}
+
+            <div class="section-header-title">
+                <span>👤</span> Account Details
+            </div>
+
+            <div class="form-grid-2">
+                <div class="form-group">
+                    <label class="form-label">Username *</label>
+                    <input type="text" name="username" class="form-input" placeholder="Choose a username" required autofocus>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Phone Number *</label>
+                    <input type="tel" name="phone" class="form-input" placeholder="e.g. 9876543210" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Email Address *</label>
+                <input type="email" name="email" class="form-input" placeholder="e.g. yourname@gmail.com" required>
+            </div>
+
+            <div class="form-grid-2">
+                <div class="form-group">
+                    <label class="form-label">Password *</label>
+                    <input type="password" name="password1" class="form-input" placeholder="Create password" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Confirm Password *</label>
+                    <input type="password" name="password2" class="form-input" placeholder="Re-enter password" required>
+                </div>
+            </div>
+
+            <div class="section-header-title">
+                <span>📍</span> Delivery Address Details
+            </div>
+
+            <div class="form-grid-2">
+                <div class="form-group">
+                    <label class="form-label">House / Flat / Bldg No. *</label>
+                    <input type="text" name="house_no" class="form-input" placeholder="e.g. A-402, Royal Residency" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Street / Area / Locality *</label>
+                    <input type="text" name="street_area" class="form-input" placeholder="e.g. S.G. Highway, Bodakdev" required>
+                </div>
+            </div>
+
+            <div class="form-grid-2">
+                <div class="form-group">
+                    <label class="form-label">City *</label>
+                    <input type="text" name="city" class="form-input" value="Ahmedabad" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Pincode *</label>
+                    <input type="text" name="pincode" class="form-input" placeholder="e.g. 380054" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Landmark (Optional)</label>
+                <input type="text" name="landmark" class="form-input" placeholder="e.g. Near LJ University Circle">
+            </div>
+
+            <button type="submit" class="btn-auth-submit">Create Account →</button>
+        </form>
+
+        <div class="auth-footer-link">
+            Already have an account? <a href="{% url 'login' %}">Sign In</a>
+        </div>
+
+        <div style="margin-top: 20px; border-top: 1px solid var(--border-color); padding-top: 15px;">
+            <a href="{% url 'home' %}" style="font-size: 12px; color: var(--text-muted); text-decoration: none;">← Back to Donzel Home</a>
+        </div>
+    </div>
+
+</body>
+</html>

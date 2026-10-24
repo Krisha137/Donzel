@@ -1,0 +1,4 @@
+Django>=5.0.0
+django-cors-headers
+requests
+razorpay>=2.0.0

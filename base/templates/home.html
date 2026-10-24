@@ -1,0 +1,541 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Donzel Artisanal Ice Cream & Desserts | Premium Chilled Boutique</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-gold: #c5a880;
+            --dark-bg: #0d0d0d;
+            --surface-bg: #161616;
+            --card-bg: #1a1a1a;
+            --text-light: #f5f5f5;
+            --text-muted: #aaaaaa;
+            --border-color: #222222;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Montserrat', sans-serif; background-color: var(--dark-bg); color: var(--text-light); line-height: 1.6; overflow-x: hidden; }
+        h1, h2, h3, h4 { font-family: 'Cormorant Garamond', serif; font-weight: 600; letter-spacing: 1px; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; width: 100%; }
+
+        /* Clean Navbar (Logo, Menu, Cart, Sidebar Button) */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 70px;
+            z-index: 1000;
+            background: rgba(13, 13, 13, 0.95);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(197, 168, 128, 0.2);
+            display: flex;
+            align-items: center;
+        }
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .logo {
+            font-size: 24px;
+            color: var(--primary-gold);
+            text-decoration: none;
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 3px;
+            font-family: 'Cormorant Garamond', serif;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            line-height: 1;
+        }
+        .logo:hover { opacity: 0.9; }
+
+        .nav-right-group {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .nav-link-item {
+            color: var(--text-light);
+            text-decoration: none;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+        .nav-link-item:hover, .nav-link-item.active { color: var(--primary-gold); }
+
+        .cart-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(197, 168, 128, 0.1);
+            border: 1px solid rgba(197, 168, 128, 0.3);
+            padding: 6px 14px;
+            border-radius: 20px;
+            color: var(--primary-gold);
+            text-decoration: none;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .cart-pill:hover {
+            background: rgba(197, 168, 128, 0.2);
+            border-color: var(--primary-gold);
+        }
+        .cart-count-badge {
+            background: var(--primary-gold);
+            color: #111;
+            font-size: 11px;
+            font-weight: 700;
+            border-radius: 10px;
+            padding: 2px 7px;
+            min-width: 18px;
+            text-align: center;
+        }
+
+        .profile-trigger-btn {
+            background: rgba(197, 168, 128, 0.1);
+            border: 1px solid rgba(197, 168, 128, 0.3);
+            color: var(--primary-gold);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+        .profile-trigger-btn:hover {
+            background: rgba(197, 168, 128, 0.25);
+            border-color: var(--primary-gold);
+        }
+
+        /* Drawer Overlay & Panel Sidebar */
+        .drawer-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(4px);
+            z-index: 2000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .drawer-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .profile-drawer {
+            position: fixed;
+            top: 0;
+            right: -420px;
+            width: 380px;
+            max-width: 90vw;
+            height: 100vh;
+            background: #121212;
+            border-left: 1px solid rgba(197, 168, 128, 0.25);
+            z-index: 2001;
+            transition: right 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 25px 20px;
+            box-shadow: -10px 0 30px rgba(0,0,0,0.8);
+            overflow-y: auto;
+        }
+        .profile-drawer.active {
+            right: 0;
+        }
+
+        .drawer-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 18px;
+            margin-bottom: 25px;
+        }
+        .drawer-title {
+            font-size: 20px;
+            color: var(--primary-gold);
+            font-family: 'Cormorant Garamond', serif;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+        .drawer-close-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 24px;
+            cursor: pointer;
+        }
+        .drawer-close-btn:hover { color: var(--primary-gold); }
+
+        .user-info-card {
+            background: rgba(22, 22, 22, 0.8);
+            border: 1px solid rgba(197, 168, 128, 0.2);
+            border-radius: 8px;
+            padding: 18px;
+            margin-bottom: 25px;
+        }
+        .user-info-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+        .user-avatar-circle {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: rgba(197, 168, 128, 0.15);
+            border: 1px solid var(--primary-gold);
+            color: var(--primary-gold);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        .user-name-title { font-size: 16px; font-weight: 600; color: var(--text-light); }
+        .user-role-badge { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: var(--primary-gold); background: rgba(197, 168, 128, 0.1); padding: 2px 8px; border-radius: 10px; display: inline-block; }
+        .user-detail-line { font-size: 12px; color: var(--text-muted); margin-top: 6px; }
+
+        .drawer-nav-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            flex-grow: 1;
+        }
+        .drawer-nav-list a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #d1d1d1;
+            text-decoration: none;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            padding: 10px 14px;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+            background: rgba(255,255,255,0.02);
+            border: 1px solid transparent;
+        }
+        .drawer-nav-list a:hover {
+            background: rgba(197, 168, 128, 0.1);
+            border-color: rgba(197, 168, 128, 0.3);
+            color: var(--primary-gold);
+        }
+
+        .drawer-logout-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            padding: 12px;
+            background: rgba(217, 83, 79, 0.1);
+            border: 1px solid #d9534f;
+            color: #d9534f;
+            text-decoration: none;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 600;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+        .drawer-logout-btn:hover { background: #d9534f; color: #fff; }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(to bottom, rgba(11, 12, 16, 0.75), rgba(11, 12, 16, 0.95)), url('/static/images/hero_bg.jpg') no-repeat center center/cover;
+            padding: 170px 0 110px 0;
+            text-align: center;
+            border-bottom: 1px solid rgba(197, 168, 128, 0.2);
+        }
+
+        .hero-badge {
+            background: rgba(197, 168, 128, 0.15);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--primary-gold);
+            padding: 12px 28px;
+            border-radius: 30px;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 30px;
+            font-size: 13px;
+            color: var(--text-light);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.5);
+        }
+
+        .hero-title {
+            font-size: 56px;
+            line-height: 1.15;
+            margin-bottom: 20px;
+            font-family: 'Cormorant Garamond', serif;
+        }
+
+        .hero-title span {
+            color: var(--primary-gold);
+            font-style: italic;
+        }
+
+        .hero-desc {
+            font-size: 16px;
+            color: var(--text-muted);
+            max-width: 760px;
+            margin: 0 auto 35px auto;
+            font-weight: 300;
+            line-height: 1.8;
+        }
+
+        .card-hover-effect {
+            transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card-hover-effect:hover {
+            transform: translateY(-6px);
+            border-color: var(--primary-gold) !important;
+            box-shadow: 0 12px 30px rgba(197, 168, 128, 0.15);
+        }
+
+        .btn-gold {
+            background: var(--primary-gold);
+            color: #111;
+            font-weight: 700;
+            padding: 14px 32px;
+            border-radius: 30px;
+            text-decoration: none;
+            text-transform: uppercase;
+            font-size: 12px;
+            letter-spacing: 1.5px;
+            box-shadow: 0 5px 20px rgba(197, 168, 128, 0.4);
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+        .btn-gold:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(197, 168, 128, 0.6);
+            background: #d4b68e;
+        }
+
+        .btn-outline {
+            background: rgba(255,255,255,0.05);
+            color: var(--text-light);
+            border: 1px solid rgba(197, 168, 128, 0.3);
+            padding: 14px 32px;
+            border-radius: 30px;
+            text-decoration: none;
+            text-transform: uppercase;
+            font-size: 12px;
+            letter-spacing: 1.5px;
+            backdrop-filter: blur(8px);
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+        .btn-outline:hover {
+            border-color: var(--primary-gold);
+            color: var(--primary-gold);
+            background: rgba(197, 168, 128, 0.1);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Minimal Navbar (Logo, Menu, Cart, Sidebar Button) -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="{% url 'home' %}" class="logo">
+                🍨 DONZEL
+            </a>
+
+            <div class="nav-right-group">
+                <a href="{% url 'menu' %}" class="nav-link-item">Menu</a>
+
+                <a href="{% url 'cart' %}" class="cart-pill" title="View Cart">
+                    <span>🛒 Cart</span>
+                    <span class="cart-count-badge">{{ cart_count }}</span>
+                </a>
+
+                <button class="profile-trigger-btn" onclick="toggleProfileDrawer()" title="Open Sidebar">
+                    <span>👤 {% if user.is_authenticated %}{{ user.username }}{% endif %}</span>
+                    <span style="font-size:14px; font-weight:bold;">⋯</span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    {% include 'includes/sidebar.html' %}
+
+    <!-- Hero Section -->
+    <header class="hero">
+        <div class="container" style="max-width: 900px;">
+            <h1 class="hero-title">Savor the Luxury of <br><span>Handcrafted Ice Cream</span></h1>
+            <p class="hero-desc">Welcome to Donzel Artisanal Ice Cream Parlour. Discover sub-zero churned gelatos, Belgian chocolate cold cocoa, gourmet sundae bowls, and freshly baked ice cream pastries.</p>
+            
+            <div style="display: flex; gap: 18px; justify-content: center; flex-wrap: wrap;">
+                <a href="{% url 'customizer' %}" class="btn-gold">
+                    Build Custom Sundae 🍨
+                </a>
+                <a href="{% url 'menu' %}" class="btn-outline">
+                    Explore Ice Cream Menu 📜
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- 4 Flavor Categories Section -->
+    <section style="padding: 90px 0; background: var(--dark-bg);">
+        <div class="container">
+            <div style="text-align: center; margin-bottom: 50px;">
+                <span style="color: var(--primary-gold); font-size: 12px; text-transform: uppercase; letter-spacing: 2px; font-weight: 700; display: block; margin-bottom: 8px;">Chilled Artistry</span>
+                <h2 style="font-size: 40px; color: #fff;">Crafted Ice Cream Collections</h2>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 25px;">
+                <div class="card-hover-effect" style="background: var(--surface-bg); border: 1px solid var(--border-color); border-radius: 16px; overflow: hidden;">
+                    <div style="height: 190px; background: url('{% static "images/belgium_gelato.jpg" %}') center center/cover;"></div>
+                    <div style="padding: 22px;">
+                        <h3 style="color: var(--primary-gold); font-size: 22px; margin-bottom: 8px;">🍨 Artisanal Gelato Tubs</h3>
+                        <p style="font-size: 13px; color: var(--text-muted); line-height: 1.6;">Dense Belgian chocolate, tender coconut sorbet, and Alphonso mango gelatos made with pure fruit pulp.</p>
+                        <a href="{% url 'menu' %}" style="display: inline-block; margin-top: 15px; color: var(--primary-gold); text-decoration: none; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">View Gelatos →</a>
+                    </div>
+                </div>
+
+                <div class="card-hover-effect" style="background: var(--surface-bg); border: 1px solid var(--border-color); border-radius: 16px; overflow: hidden;">
+                    <div style="height: 190px; background: url('{% static "images/dnd_coco.jpg" %}') center center/cover;"></div>
+                    <div style="padding: 22px;">
+                        <h3 style="color: var(--primary-gold); font-size: 22px; margin-bottom: 8px;">🍫 Belgian Cold Cocoa</h3>
+                        <p style="font-size: 13px; color: var(--text-muted); line-height: 1.6;">Our signature DND Cold Cocoa and thick cocoa pots crafted with 70% dark Belgian cocoa and vanilla scoops.</p>
+                        <a href="{% url 'menu' %}" style="display: inline-block; margin-top: 15px; color: var(--primary-gold); text-decoration: none; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">View Cocoa →</a>
+                    </div>
+                </div>
+
+                <div class="card-hover-effect" style="background: var(--surface-bg); border: 1px solid var(--border-color); border-radius: 16px; overflow: hidden;">
+                    <div style="height: 190px; background: url('{% static "images/coco_sundae.jpg" %}') center center/cover;"></div>
+                    <div style="padding: 22px;">
+                        <h3 style="color: var(--primary-gold); font-size: 22px; margin-bottom: 8px;">🍨 Gourmet Sundae Bowls</h3>
+                        <p style="font-size: 13px; color: var(--text-muted); line-height: 1.6;">Multi-layered sundae creations featuring fudgy brownies, roasted pralines, and hot fudge drizzles.</p>
+                        <a href="{% url 'customizer' %}" style="display: inline-block; margin-top: 15px; color: var(--primary-gold); text-decoration: none; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">Build Sundae →</a>
+                    </div>
+                </div>
+
+                <div class="card-hover-effect" style="background: var(--surface-bg); border: 1px solid var(--border-color); border-radius: 16px; overflow: hidden;">
+                    <div style="height: 190px; background: url('{% static "images/biscoff_pastry.jpg" %}') center center/cover;"></div>
+                    <div style="padding: 22px;">
+                        <h3 style="color: var(--primary-gold); font-size: 22px; margin-bottom: 8px;">🍰 Ice Cream Pastries</h3>
+                        <p style="font-size: 13px; color: var(--text-muted); line-height: 1.6;">Decadent ice cream cakes and pastry slices layered with Lotus Biscoff, Nutella, and Red Velvet berries.</p>
+                        <a href="{% url 'menu' %}" style="display: inline-block; margin-top: 15px; color: var(--primary-gold); text-decoration: none; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">View Pastries →</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Signature Masterpieces Section -->
+    <section id="specials" style="padding: 90px 0; background: var(--dark-bg);">
+        <div class="container">
+            <div style="text-align: center; margin-bottom: 50px;">
+                <span style="color: var(--primary-gold); font-size: 12px; text-transform: uppercase; letter-spacing: 2px; font-weight: 700; display: block; margin-bottom: 8px;">Curated For Dessert Connoisseurs</span>
+                <h2 style="font-size: 40px; color: #fff;">Signature Masterpieces</h2>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px;">
+                <div class="card-hover-effect" style="background: var(--surface-bg); border: 1px solid var(--border-color); border-radius: 16px; overflow: hidden;">
+                    <div style="height: 220px; background: url('{% static "images/dnd_coco.jpg" %}') center center/cover;"></div>
+                    <div style="padding: 25px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                            <h3 style="font-size: 22px; color: #fff;">DND Cold Coco (Jumbo)</h3>
+                            <span style="color: var(--primary-gold); font-size: 20px; font-weight: 700;">₹200</span>
+                        </div>
+                        <p style="font-size: 13px; color: var(--text-muted); line-height: 1.6; margin-bottom: 20px;">Our ultra-thick signature cold cocoa served jumbo style (650 ml) with a scoop of vanilla ice cream.</p>
+                        <a href="{% url 'menu' %}" style="display: block; text-align: center; background: rgba(197, 168, 128, 0.15); color: var(--primary-gold); border: 1px solid var(--primary-gold); padding: 10px; border-radius: 8px; text-decoration: none; font-size: 12px; font-weight: bold; text-transform: uppercase;">Order Now</a>
+                    </div>
+                </div>
+
+                <div class="card-hover-effect" style="background: var(--surface-bg); border: 1px solid var(--border-color); border-radius: 16px; overflow: hidden;">
+                    <div style="height: 220px; background: url('{% static "images/coco_sundae.jpg" %}') center center/cover;"></div>
+                    <div style="padding: 25px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                            <h3 style="font-size: 22px; color: #fff;">Coco Sundae</h3>
+                            <span style="color: var(--primary-gold); font-size: 20px; font-weight: 700;">₹200</span>
+                        </div>
+                        <p style="font-size: 13px; color: var(--text-muted); line-height: 1.6; margin-bottom: 20px;">A luxurious rich chocolate base topped with premium gelato scoops and roasted almonds.</p>
+                        <a href="{% url 'menu' %}" style="display: block; text-align: center; background: rgba(197, 168, 128, 0.15); color: var(--primary-gold); border: 1px solid var(--primary-gold); padding: 10px; border-radius: 8px; text-decoration: none; font-size: 12px; font-weight: bold; text-transform: uppercase;">Order Now</a>
+                    </div>
+                </div>
+
+                <div class="card-hover-effect" style="background: var(--surface-bg); border: 1px solid var(--border-color); border-radius: 16px; overflow: hidden;">
+                    <div style="height: 220px; background: url('{% static "images/ny_cheese_cake.jpg" %}') center center/cover;"></div>
+                    <div style="padding: 25px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                            <h3 style="font-size: 22px; color: #fff;">New York Cheese Cake</h3>
+                            <span style="color: var(--primary-gold); font-size: 20px; font-weight: 700;">₹120</span>
+                        </div>
+                        <p style="font-size: 13px; color: var(--text-muted); line-height: 1.6; margin-bottom: 20px;">Rich and creamy artisan ice cream carrying authentic graham crust notes and strawberry drizzle.</p>
+                        <a href="{% url 'menu' %}" style="display: block; text-align: center; background: rgba(197, 168, 128, 0.15); color: var(--primary-gold); border: 1px solid var(--primary-gold); padding: 10px; border-radius: 8px; text-decoration: none; font-size: 12px; font-weight: bold; text-transform: uppercase;">Order Now</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer id="footer" style="background: #08090d; padding: 60px 0 30px 0; border-top: 1px solid var(--border-color);">
+        <div class="container">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 40px; margin-bottom: 40px;">
+                <div>
+                    <h3 style="color: var(--primary-gold); font-size: 22px; margin-bottom: 15px; font-family: 'Cormorant Garamond', serif;">DONZEL ICE CREAM</h3>
+                    <p style="font-size: 13px; color: var(--text-muted); line-height: 1.7;">Experience pure chilled luxury. We bring you handcrafted artisanal ice cream, Belgian cold cocoa, and sub-zero creations in an elite boutique parlor.</p>
+                </div>
+                <div>
+                    <h3 style="color: #fff; font-size: 16px; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px;">Visit Our Parlour</h3>
+                    <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 6px;">📍 S.G. Highway, near LJ University, Ahmedabad</p>
+                    <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 6px;">🕒 Open Daily: 11:00 AM – 1:00 AM</p>
+                    <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 6px;">📞 +91 98765 43210</p>
+                    <p style="font-size: 13px; color: var(--text-muted);">📧 info@donzelicecream.com</p>
+                </div>
+                <div>
+                    <h3 style="color: #fff; font-size: 16px; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px;">Quick Links</h3>
+                    <ul style="list-style: none; padding: 0;">
+                        <li style="margin-bottom: 8px;"><a href="{% url 'menu' %}" style="color: var(--text-muted); text-decoration: none; font-size: 13px;">📜 Ice Cream Menu</a></li>
+                        <li style="margin-bottom: 8px;"><a href="{% url 'customizer' %}" style="color: var(--text-muted); text-decoration: none; font-size: 13px;">🍨 Sundae Studio</a></li>
+                        <li style="margin-bottom: 8px;"><a href="{% url 'about' %}" style="color: var(--text-muted); text-decoration: none; font-size: 13px;">📖 Our Craft & Story</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div style="text-align: center; font-size: 12px; color: #555; border-top: 1px solid #1a1c26; padding-top: 25px;">
+                &copy; 2026 Donzel Artisanal Ice Cream Parlour. All Rights Reserved.
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

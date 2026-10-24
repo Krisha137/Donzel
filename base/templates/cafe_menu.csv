@@ -1,0 +1,152 @@
+category,name,price,volume,ingredeients
+Coco,Coco Sundae,₹200,240 ml·430 kcal,Milk
+Coco,DND Coco,₹200,650 ml·831 kcal,Milk
+Coco,Extra Dark Coco,₹190,240 ml·438 kcal,Milk
+Coco,Chocolate Swirl,₹150,240 ml·428 kcal,Milk
+Coco,Chococream Coco,₹140,240 ml·427 kcal,Milk
+Coco,Vanicream Coco,₹140,240 ml·420 kcal,Milk
+Coco,Kit Kat Coco,₹120,240 ml·407 kcal,Milk
+Coco,Kaju Coco,₹120,240 ml·417 kcal,Milk
+Coco,Coco Crunch,₹120,240 ml·411 kcal,Milk
+Coco,Rich Coco,₹80,240 ml·307 kcal,Milk
+Lassi,Kaju,₹90,240 ml·279 kcal,Milk
+Lassi,Mango,₹60,240 ml·270 kcal,Milk
+Lassi,Cream,₹60,240 ml·263 kcal,Milk
+Sizzling Brownie,Brownie with Vanilla Scoop,₹160,Brownie 50 g·602 kcal,Milk
+Sizzling Brownie,Brownie with Chocolate Scoop,₹160,Brownie 50 g·620 kcal,Milk
+Scoop,The Black Scoop,₹120,80 g·131 kcal,
+Scoop,Hazelnut Chocolate,₹120,80 g·126 kcal,Milk
+Scoop,Musk Melon,₹120,80 g·164 kcal,Milk
+Scoop,New York Cheese Cake,₹120,80 g·200 kcal,Milk
+Scoop,Strawberry Cheese Cake,₹120,80 g·200 kcal,Milk
+Scoop,Caramel Walnut,₹120,80 g·126 kcal,Milk
+Scoop,Cherry Mania,₹100,80 g·107 kcal,Milk
+Scoop,Chocolate Fudge Brownie,₹100,80 g·129 kcal,Milk
+Scoop,Naariyal Pani Sorbet,₹100,80 g·141 kcal,
+Scoop,Anjeer,₹100,80 g·112 kcal,Milk
+Scoop,Pure Chocolate,₹90,80 g·120 kcal,Milk
+Scoop,Strawberry,₹90,80 g·109 kcal,Milk
+Scoop,Bubbly,₹90,80 g·116 kcal,Milk
+Scoop,Tender Coconut,₹90,80 g·113 kcal,Milk
+Scoop,Mango & Strawberry,₹90,80 g·105 kcal,Milk
+Scoop,Sitafal,₹80,80 g·105 kcal,Milk
+Scoop,Paan Masala,₹80,80 g·117 kcal,Milk
+Scoop,Mango,₹80,80 g·109 kcal,Milk
+Scoop,French Vanilla,₹80,80 g·112 kcal,Milk
+Scoop,Watermelon,₹80,80 g·131 kcal,
+Slice,Dark Chocolate,₹80,125 ml·292 kcalNew,Milk
+Slice,Kulfi Nuts,₹70,125 ml·327 kcalNew,Milk
+Slice,Rosa Rose,₹70,125 ml·284 kcalNew,Milk
+Slice,Paan Masala,₹70,125 ml·242 kcalNew,Milk
+Slice,Gulabri,₹80,125 ml·298 kcalIce Mithai,Milk
+Slice,Kesar Mawa Malai,₹80,125 ml·300 kcalIce Mithai,Milk
+Slice,Kaju Khajur,₹70,125 ml·254 kcalNo added sugar,Milk
+Slice,Roasted Almond,₹70,125 ml·227 kcalNo added sugar,Milk
+Slice,Anjeer,₹70,125 ml·205 kcalNo added sugar,Milk
+Slice,Cream & Cookies,₹90,125 ml·268 kcal,Milk
+Slice,Roasted Almond Anjeer,₹70,125 ml·280 kcal,Milk
+Slice,Roasted Almond Chocolate,₹70,125 ml·294 kcal,Milk
+Slice,Kesar Rajbhog,₹70,125 ml·338 kcal,Milk
+Slice,Butter Scotch,₹70,125 ml·261 kcal,Milk
+Slice,Swiss Cake,₹70,125 ml·272 kcal,Milk
+Slice,American Nuts,₹70,125 ml·315 kcal,Milk
+Slice,Black Currant,₹70,125 ml·231 kcal,Milk
+Slice,Chocolate Chips,₹70,125 ml·282 kcal,Milk
+Slice,Kaju Draksh,₹70,125 ml·274 kcal,Milk
+Slice,Kaju Gulkand,₹70,125 ml·290 kcal,Milk
+Slice,Creamy Vanilla,₹50,125 ml·245 kcal,Milk
+Slice,Choco Cream,₹50,125 ml·255 kcal,Milk
+Slice,Strawberry,₹50,125 ml·249 kcal,Milk
+Pastry,Biscoff,₹200,125 ml·312 kcal,Milk
+Pastry,Rose Pistachio,₹200,125 ml·325 kcal,Milk
+Pastry,New York Cheese,₹190,125 ml·295 kcal,Milk
+Pastry,Red Velvet Berry Cheese,₹190,125 ml·289 kcal,Milk
+Pastry,Strawberry Cheese,₹190,125 ml·290 kcal,Milk
+Pastry,Hazelnut Crunch,₹190,125 ml·312 kcal,Milk
+Pastry,Roasted Almond Truffle,₹190,125 ml·297 kcal,Milk
+Pastry,Mawa Malai,₹150,125 ml·360 kcal,Milk
+Pastry,Golden Fantasy,₹110,125 ml·277 kcal,Milk
+Pastry,Cream & Cookies,₹110,125 ml·302 kcal,Milk
+Pastry,Black Forest,₹100,125 ml·285 kcal,Milk
+Gelato Tubs,Cherry Mania,₹380,500 ml,Milk
+Gelato Tubs,Caramel Walnut,₹380,500 ml,Milk
+Gelato Tubs,Chocolate Fudge Brownie,₹380,500 ml,Milk
+Gelato Tubs,Belgium Chocolate,₹300,500 ml,Milk
+Gelato Tubs,Anjeer,₹300,500 ml,Milk
+Gelato Tubs,Strawberry,₹260,500 ml,Milk
+Gelato Tubs,Bubbly,₹260,500 ml,Milk
+Gelato Tubs,Tender Coconut,₹260,500 ml,Milk
+Gelato Tubs,Mango & Strawberry,₹260,500 ml,Milk
+Gelato Tubs,Paan Masala,₹240,500 ml,Milk
+Gelato Tubs,Mango,₹240,500 ml,Milk
+Gelato Tubs,French Vanilla,₹240,500 ml,Milk
+Milkshake,Don,₹220,300 ml·790 kcal,Milk
+Milkshake,Kaju Chocolate,₹180,300 ml·462 kcal,Milk
+Milkshake,Dry Fruit,₹180,300 ml·730 kcal,Milk
+Milkshake,Kaju,₹180,300 ml·673 kcal,Milk
+Milkshake,Kaju Gulkand,₹180,300 ml·753 kcal,Milk
+Milkshake,Coconut,₹180,300 ml·777 kcal,Milk
+Milkshake,Badam Anjeer,₹150,300 ml·536 kcal,Milk
+Milkshake,Kaju Anjeer,₹150,300 ml·530 kcal,Milk
+Milkshake,Kaju Badam,₹150,300 ml·680 kcal,Milk
+Milkshake,Mango,₹130,300 ml·412 kcal,Milk
+Milkshake,Chikoo,₹130,300 ml·443 kcal,Milk
+Mastani,Tender Coconut,₹200,240 ml·210 kcal,Milk
+Mastani,Strawberry,₹180,240 ml·396 kcal,Milk
+Mastani,Chocolate,₹180,240 ml·401 kcal,Milk
+Mastani,Anjeer,₹180,240 ml·398 kcal,Milk
+Mastani,Mango,₹180,240 ml·396 kcal,Milk
+Thickshake,Biscoff,₹180,240 ml·280 kcal,Milk
+Thickshake,Red Velvet,₹180,240 ml·275 kcal,Milk
+Thickshake,Nutella,₹180,240 ml·288 kcal,Milk
+Thickshake,Tender Coconut,₹140,240 ml·269 kcal,Milk
+Thickshake,Choco Chips,₹140,240 ml·277 kcal,Milk
+Thickshake,Kaju Badam,₹140,240 ml·257 kcal,Milk
+Thickshake,Kaju Anjeer,₹140,240 ml·280 kcal,Milk
+Thickshake,Kit Kat,₹140,240 ml·266 kcal,Milk
+Thickshake,Oreo,₹140,240 ml·265 kcal,Milk
+Thickshake,Kaju,₹140,240 ml·289 kcal,Milk
+Thickshake,Kaju Gulkand,₹140,240 ml·263 kcal,Milk
+Thickshake,Badam Pista,₹140,240 ml·260 kcal,Milk
+Thickshake,Dry Fruit,₹140,240 ml·293 kcal,Milk
+Thickshake,Kesar Pista,₹140,240 ml·244 kcal,Milk
+Thickshake,Kaju Draksh,₹140,240 ml·258 kcal,Milk
+Thickshake,Roasted Almond Anjeer,₹140,240 ml·281 kcal,Milk
+Thickshake,Roasted Almond Chocolate,₹140,240 ml·250 kcal,Milk
+Thickshake,Roasted Almond,₹140,240 ml·262 kcal,Milk
+Thickshake,Chocolate,₹110,240 ml·308 kcal,Milk
+Thickshake,Chikoo,₹110,240 ml·256 kcal,Milk
+Thickshake,Strawberry,₹110,240 ml·243 kcal,Milk
+Thickshake,Mango,₹110,240 ml·249 kcal,Milk
+Thickshake,Anjeer,₹110,240 ml·281 kcal,Milk
+Thickshake,Black Currant,₹110,240 ml·257 kcal,Milk
+Thickshake,Vanilla,₹100,240 ml·247 kcal,Milk
+Thickshake,Shahi Gulab,₹100,240 ml·258 kcal,Milk
+Thickshake,Kesar Elaichi,₹100,240 ml·268 kcal,Milk
+Takeaway Party Pack,Dark Chocolate,₹350,1 LNew,Milk
+Takeaway Party Pack,Kulfi Nuts,₹310,1 LNew,Milk
+Takeaway Party Pack,Rosa Rose,₹310,1 LNew,Milk
+Takeaway Party Pack,Paan Masala,₹310,1 LNew,Milk
+Takeaway Party Pack,Kaju Khajur,₹310,1 LNo added sugar,Milk
+Takeaway Party Pack,Roasted Almond,₹310,1 LNo added sugar,Milk
+Takeaway Party Pack,Anjeer,₹310,1 LNo added sugar,Milk
+Takeaway Party Pack,Cream & Cookies,₹420,1 L,Milk
+Takeaway Party Pack,Roasted Almond Anjeer,₹310,1 L,Milk
+Takeaway Party Pack,Roasted Almond Chocolate,₹310,1 L,Milk
+Takeaway Party Pack,Kesar Rajbhog,₹310,1 L,Milk
+Takeaway Party Pack,Butter Scotch,₹310,1 L,Milk
+Takeaway Party Pack,Swiss Cake,₹310,1 L,Milk
+Takeaway Party Pack,American Nuts,₹310,1 L,Milk
+Takeaway Party Pack,Black Currant,₹310,1 L,Milk
+Takeaway Party Pack,Chocolate Chips,₹310,1 L,Milk
+Takeaway Party Pack,Kaju Draksh,₹310,1 L,Milk
+Takeaway Party Pack,Kaju Gulkand,₹310,1 L,Milk
+Takeaway Party Pack,Creamy Vanilla,₹230,1 L,Milk
+Takeaway Party Pack,Choco Cream,₹230,1 L,Milk
+Takeaway Party Pack,Strawberry,₹230,1 L,Milk
+Takeaway Party Pack,Gulabri,₹350,1 LIce Mithai,Milk
+Takeaway Party Pack,Kesar Mawa Malai,₹350,1 LIce Mithai,Milk
+Ice Cream Cakes,Mawa Malai,,Made to order,Milk
+Ice Cream Cakes,Kaju Gulkand Cake,,Made to order,Milk
+Ice Cream Cakes,Golden Fantasy,,Made to order,Milk
+Ice Cream Cakes,Black Forest,,Made to order,Milk

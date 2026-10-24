@@ -1,0 +1,764 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Confirmed | Donzel Artisanal Ice Cream Parlour</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-gold: #c5a880;
+            --dark-bg: #0b0c10;
+            --surface-bg: #14161d;
+            --card-bg: #1a1d29;
+            --text-light: #f8f9fa;
+            --text-muted: #a0a5b5;
+            --border-color: rgba(197, 168, 128, 0.25);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Montserrat', sans-serif; background-color: var(--dark-bg); color: var(--text-light); line-height: 1.6; min-height: 100vh; display: flex; flex-direction: column; justify-content: space-between; overflow-x: hidden; }
+        h1, h2, h3, h4 { font-family: 'Cormorant Garamond', serif; letter-spacing: 1px; }
+        .container { max-width: 950px; margin: 0 auto; padding: 0 20px; width: 100%; }
+
+        /* Clean Navbar */
+        .navbar { position: fixed; top: 0; left: 0; width: 100%; height: 70px; z-index: 1000; background: rgba(13, 13, 13, 0.95); backdrop-filter: blur(16px); border-bottom: 1px solid rgba(197, 168, 128, 0.2); display: flex; align-items: center; }
+        .nav-container { display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+        .logo { font-size: 24px; color: var(--primary-gold); text-decoration: none; text-transform: uppercase; font-weight: 700; font-family: 'Cormorant Garamond', serif; display: flex; align-items: center; gap: 8px; }
+        .nav-right-group { display: flex; align-items: center; gap: 20px; }
+        .nav-link-item { color: var(--text-light); text-decoration: none; font-size: 12px; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 600; }
+        .nav-link-item:hover, .nav-link-item.active { color: var(--primary-gold); }
+
+        .cart-pill { display: inline-flex; align-items: center; gap: 8px; background: rgba(197, 168, 128, 0.1); border: 1px solid rgba(197, 168, 128, 0.3); padding: 6px 14px; border-radius: 20px; color: var(--primary-gold); text-decoration: none; font-size: 12px; font-weight: 600; }
+        .cart-count-badge { background: var(--primary-gold); color: #111; font-size: 11px; font-weight: 700; border-radius: 10px; padding: 2px 7px; }
+
+        .profile-trigger-btn { background: rgba(197, 168, 128, 0.1); border: 1px solid rgba(197, 168, 128, 0.3); color: var(--primary-gold); padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; }
+
+        /* Slide-Out Profile Drawer Sidebar */
+        .drawer-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(4px);
+            z-index: 2000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .drawer-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .profile-drawer {
+            position: fixed;
+            top: 0;
+            right: -420px;
+            width: 380px;
+            max-width: 90vw;
+            height: 100vh;
+            background: #121212;
+            border-left: 1px solid rgba(197, 168, 128, 0.25);
+            z-index: 2001;
+            transition: right 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 25px 20px;
+            box-shadow: -10px 0 30px rgba(0,0,0,0.8);
+            overflow-y: auto;
+        }
+        .profile-drawer.active {
+            right: 0;
+        }
+
+        .drawer-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 18px;
+            margin-bottom: 25px;
+        }
+        .drawer-title {
+            font-size: 20px;
+            color: var(--primary-gold);
+            font-family: 'Cormorant Garamond', serif;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+        .drawer-close-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 24px;
+            cursor: pointer;
+        }
+        .drawer-close-btn:hover { color: var(--primary-gold); }
+
+        .drawer-nav-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            flex-grow: 1;
+        }
+        .drawer-nav-list a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #d1d1d1;
+            text-decoration: none;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            padding: 10px 14px;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+            background: rgba(255,255,255,0.02);
+            border: 1px solid transparent;
+        }
+        .drawer-nav-list a:hover {
+            background: rgba(197, 168, 128, 0.1);
+            border-color: rgba(197, 168, 128, 0.3);
+            color: var(--primary-gold);
+        }
+
+        .drawer-logout-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            padding: 12px;
+            background: rgba(217, 83, 79, 0.1);
+            border: 1px solid #d9534f;
+            color: #d9534f;
+            text-decoration: none;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 600;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+        .drawer-logout-btn:hover {
+            background: #d9534f;
+            color: #fff;
+        }
+
+        .user-avatar-circle {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: rgba(197, 168, 128, 0.15);
+            border: 1px solid var(--primary-gold);
+            color: var(--primary-gold);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .page-header { padding: 140px 0 45px 0; background: linear-gradient(rgba(11,12,16,0.88), rgba(11,12,16,0.95)), url('{% static "images/hero3_bg.png" %}') no-repeat center center/cover; text-align: center; border-bottom: 1px solid var(--border-color); position: relative; }
+        .page-header h1 { font-size: 52px; color: var(--primary-gold); margin-bottom: 10px; }
+
+        /* Animated Success Icon */
+        .success-hero-box {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .success-icon-wrap {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(197,168,128,0.25) 0%, rgba(197,168,128,0.05) 70%);
+            border: 2px solid var(--primary-gold);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 44px;
+            margin: 0 auto 20px auto;
+            box-shadow: 0 0 30px rgba(197, 168, 128, 0.4);
+            animation: pulseGlow 2s infinite ease-in-out;
+        }
+
+        @keyframes pulseGlow {
+            0% { box-shadow: 0 0 20px rgba(197, 168, 128, 0.3); transform: scale(1); }
+            50% { box-shadow: 0 0 40px rgba(197, 168, 128, 0.6); transform: scale(1.04); }
+            100% { box-shadow: 0 0 20px rgba(197, 168, 128, 0.3); transform: scale(1); }
+        }
+
+        .order-token-tag {
+            display: inline-block;
+            background: linear-gradient(135deg, rgba(197, 168, 128, 0.2), rgba(197, 168, 128, 0.05));
+            border: 1.5px solid var(--primary-gold);
+            color: var(--primary-gold);
+            padding: 6px 18px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+        }
+
+        /* Order Tracking Timeline */
+        .timeline-card {
+            background: var(--surface-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 18px;
+            padding: 30px 24px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+        }
+        .timeline-title {
+            font-size: 18px;
+            color: var(--primary-gold);
+            font-weight: 700;
+            margin-bottom: 25px;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .timeline-steps {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            position: relative;
+            text-align: center;
+        }
+        .timeline-step {
+            position: relative;
+            z-index: 2;
+        }
+        .step-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.15);
+            color: #888;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            margin: 0 auto 10px auto;
+            transition: all 0.3s ease;
+        }
+        .timeline-step.active .step-icon {
+            background: var(--primary-gold);
+            color: #111;
+            border-color: var(--primary-gold);
+            box-shadow: 0 0 15px rgba(197, 168, 128, 0.5);
+            font-weight: bold;
+        }
+        .timeline-step.completed .step-icon {
+            background: rgba(46, 204, 113, 0.2);
+            color: #2ecc71;
+            border-color: #2ecc71;
+        }
+        .step-label {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .timeline-step.active .step-label {
+            color: #fff;
+        }
+
+        /* Email Notification Banner */
+        .email-banner {
+            background: linear-gradient(135deg, rgba(46, 204, 113, 0.15), rgba(46, 204, 113, 0.05));
+            border: 1px solid #2ecc71;
+            color: #2ecc71;
+            padding: 16px 20px;
+            border-radius: 14px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 30px;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        /* Receipt Card */
+        .receipt-card {
+            background: var(--surface-bg);
+            border: 1.5px solid var(--primary-gold);
+            border-radius: 18px;
+            padding: 35px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.8);
+            position: relative;
+            margin-bottom: 35px;
+        }
+        .receipt-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 18px;
+            margin-bottom: 22px;
+        }
+        .receipt-brand {
+            font-size: 22px;
+            color: var(--primary-gold);
+            font-family: 'Cormorant Garamond', serif;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+        }
+
+        .receipt-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+        }
+        .receipt-row strong {
+            color: #fff;
+        }
+
+        .receipt-items-list {
+            list-style: none;
+            border-top: 1px dashed rgba(255,255,255,0.12);
+            border-bottom: 1px dashed rgba(255,255,255,0.12);
+            padding: 16px 0;
+            margin: 18px 0;
+        }
+        .receipt-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+            color: var(--text-light);
+            margin-bottom: 10px;
+        }
+        .receipt-item:last-child { margin-bottom: 0; }
+        .item-qty-badge {
+            background: rgba(197, 168, 128, 0.2);
+            color: var(--primary-gold);
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 12px;
+            margin-right: 8px;
+        }
+
+        .receipt-total {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 26px;
+            font-weight: 700;
+            color: var(--primary-gold);
+            font-family: 'Cormorant Garamond', serif;
+            padding-top: 10px;
+        }
+
+        /* Action Buttons Grid */
+        .actions-grid {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        .btn-action-primary {
+            background: linear-gradient(135deg, #c5a880 0%, #a88b62 100%);
+            color: #111;
+            padding: 14px 28px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 12px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 20px rgba(197, 168, 128, 0.4);
+        }
+        .btn-action-primary:hover {
+            background: linear-gradient(135deg, #d4b68e 0%, #c5a880 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(197, 168, 128, 0.6);
+        }
+
+        .btn-action-secondary {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--border-color);
+            color: #fff;
+            padding: 14px 28px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 12px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+        .btn-action-secondary:hover {
+            border-color: var(--primary-gold);
+            color: var(--primary-gold);
+            transform: translateY(-2px);
+        }
+
+        footer { background-color: #08090d; padding: 50px 0 25px 0; border-top: 1px solid var(--border-color); text-align: center; }
+
+        @media (max-width: 600px) {
+            .timeline-steps { grid-template-columns: repeat(2, 1fr); gap: 15px; }
+            .page-header h1 { font-size: 38px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Minimal Navbar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="{% url 'home' %}" class="logo">
+                🍨 DONZEL
+            </a>
+
+            <div class="nav-right-group">
+                <a href="{% url 'menu' %}" class="nav-link-item">Menu</a>
+
+                <a href="{% url 'cart' %}" class="cart-pill" title="View Cart">
+                    <span>🛒 Cart</span>
+                    <span class="cart-count-badge">{{ cart_count }}</span>
+                </a>
+
+                <button class="profile-trigger-btn" onclick="toggleProfileDrawer()" title="Open Sidebar">
+                    <span>👤 {% if user.is_authenticated %}{{ user.username }}{% endif %}</span>
+                    <span style="font-size:14px; font-weight:bold;">⋯</span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    {% include 'includes/sidebar.html' %}
+
+    <!-- Header -->
+    <header class="page-header">
+        <div class="container">
+            <div class="success-icon-wrap">🎉</div>
+            <div class="order-token-tag">Order Token #{{ order.id|stringformat:"04d" }}</div>
+            <h1 id="mainHeaderTitle" style="font-size: 46px; color: var(--primary-gold); margin-bottom: 8px;">Order Successfully Confirmed!</h1>
+            <p style="font-size: 15px; color: var(--text-muted); max-width: 600px; margin: 0 auto;">
+                Thank you for choosing Donzel Artisanal Ice Cream Parlour. Your chilled delights are now being prepared!
+            </p>
+            <div style="font-size: 13px; color: #fff; margin-top: 12px; background: rgba(197, 168, 128, 0.1); border: 1px solid rgba(197, 168, 128, 0.3); display: inline-block; padding: 6px 18px; border-radius: 20px;">
+                ⏱ Status: <strong id="liveStatusText" style="color: var(--primary-gold);">{{ order.status }}</strong>
+            </div>
+        </div>
+    </header>
+
+    <!-- Success Section -->
+    <section style="padding: 40px 0 80px 0; flex: 1;">
+        <div class="container">
+
+            <!-- Timeline Order Progress Card -->
+            <div class="timeline-card">
+                <div class="timeline-title">
+                    <span>⚡ Live Order Status Tracker</span>
+                </div>
+                {% if order.order_type == 'dine_in' %}
+                <!-- Dine-In Status Flow: Placed -> Preparing -> Ready -> Served -->
+                <div class="timeline-steps" style="grid-template-columns: repeat(4, 1fr);">
+                    <div id="step1" class="timeline-step {% if order.status == 'Accepted & Preparing' or order.status == 'Order Ready' or order.status == 'Order Served' %}completed{% else %}active{% endif %}">
+                        <div class="step-icon">📝</div>
+                        <div class="step-label">Placed</div>
+                    </div>
+                    <div id="step2" class="timeline-step {% if order.status == 'Accepted & Preparing' %}active{% elif order.status == 'Order Ready' or order.status == 'Order Served' %}completed{% endif %}">
+                        <div class="step-icon">🍨</div>
+                        <div class="step-label">Preparing</div>
+                    </div>
+                    <div id="step3" class="timeline-step {% if order.status == 'Order Ready' %}active{% elif order.status == 'Order Served' %}completed{% endif %}">
+                        <div class="step-icon">🔔</div>
+                        <div class="step-label">Ready</div>
+                    </div>
+                    <div id="step4" class="timeline-step {% if order.status == 'Order Served' %}active completed{% endif %}">
+                        <div class="step-icon">🍽️</div>
+                        <div class="step-label">Served</div>
+                    </div>
+                </div>
+                {% else %}
+                <!-- Takeaway Status Flow: Placed -> Preparing -> Ready -> Completed -->
+                <div class="timeline-steps" style="grid-template-columns: repeat(4, 1fr);">
+                    <div id="step1" class="timeline-step {% if order.status == 'Accepted & Preparing' or order.status == 'Order Ready' or order.status == 'Order Delivered' %}completed{% else %}active{% endif %}">
+                        <div class="step-icon">📝</div>
+                        <div class="step-label">Placed</div>
+                    </div>
+                    <div id="step2" class="timeline-step {% if order.status == 'Accepted & Preparing' %}active{% elif order.status == 'Order Ready' or order.status == 'Order Delivered' %}completed{% endif %}">
+                        <div class="step-icon">🍨</div>
+                        <div class="step-label">Preparing</div>
+                    </div>
+                    <div id="step3" class="timeline-step {% if order.status == 'Order Ready' %}active{% elif order.status == 'Order Delivered' %}completed{% endif %}">
+                        <div class="step-icon">🛍️</div>
+                        <div class="step-label">Ready</div>
+                    </div>
+                    <div id="step4" class="timeline-step {% if order.status == 'Order Delivered' %}active completed{% endif %}">
+                        <div class="step-icon">🎉</div>
+                        <div class="step-label">Delivered</div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Email Confirmation Banner -->
+            <div class="email-banner" id="orderStatusBanner">
+                <span>📧</span>
+                <span>An official order confirmation receipt has been dispatched to <strong>{{ order.customer_email }}</strong></span>
+            </div>
+
+            <!-- Full Digital Receipt Card -->
+            <div class="receipt-card">
+                <div class="receipt-header">
+                    <div>
+                        <div class="receipt-brand">🍨 DONZEL ARTISANAL RECEIPT</div>
+                        <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">Official Chilled Parlour Order Invoice</div>
+                    </div>
+                    <div style="text-align: right;">
+                        <span style="font-size: 11px; background: rgba(46, 204, 113, 0.15); color: #2ecc71; border: 1px solid #2ecc71; padding: 4px 10px; border-radius: 12px; font-weight: bold;">
+                            {{ order.payment_status }}
+                        </span>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 12px;">
+                    <div class="receipt-row">
+                        <span>Order ID:</span>
+                        <strong>#{{ order.id|stringformat:"04d" }}</strong>
+                    </div>
+                    <div class="receipt-row">
+                        <span>Order Date & Time:</span>
+                        <strong>{{ order.created_at|date:"d M Y, H:i" }}</strong>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 12px;">
+                    <div class="receipt-row">
+                        <span>Customer Name:</span>
+                        <strong>{{ order.customer_name }}</strong>
+                    </div>
+                    <div class="receipt-row">
+                        <span>Phone Number:</span>
+                        <strong>{{ order.customer_phone|default:"N/A" }}</strong>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 12px;">
+                    <div class="receipt-row">
+                        <span>Order Type:</span>
+                        <strong>
+                            {% if order.order_type == 'dine_in' %}
+                                🍽️ Dine-In Table Service
+                            {% else %}
+                                🛍️ Takeaway Express Pickup
+                            {% endif %}
+                        </strong>
+                    </div>
+                    {% if order.order_type == 'dine_in' and order.table_number %}
+                    <div class="receipt-row">
+                        <span>Table Number:</span>
+                        <strong style="color: var(--primary-gold);">{{ order.table_number }}</strong>
+                    </div>
+                    {% elif order.pickup_time %}
+                    <div class="receipt-row">
+                        <span>Pickup Time:</span>
+                        <strong>{{ order.pickup_time }}</strong>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+                    <div class="receipt-row">
+                        <span>Payment Method:</span>
+                        <strong>{{ order.payment_method }}</strong>
+                    </div>
+                    <div class="receipt-row">
+                        <span>Payment Status:</span>
+                        <strong style="color: #2ecc71;">{{ order.payment_status }}</strong>
+                    </div>
+                </div>
+
+                {% if order.order_type == 'takeaway' %}
+                <div class="receipt-row" style="margin-bottom: 15px;">
+                    <span>Parlour Pickup Location:</span>
+                    <strong>📍 Donzel Artisanal Parlour, S.G. Highway, near LJ University, Ahmedabad (380054)</strong>
+                </div>
+                {% elif order.delivery_address %}
+                <div class="receipt-row" style="margin-bottom: 15px;">
+                    <span>Delivery Location:</span>
+                    <strong>📍 {{ order.delivery_address }}</strong>
+                </div>
+                {% endif %}
+
+                <!-- Itemized List -->
+                <ul class="receipt-items-list">
+                    {% for item in order.items.all %}
+                    <li class="receipt-item">
+                        <div>
+                            <span class="item-qty-badge">{{ item.quantity }}x</span>
+                            <span>{{ item.item_name }}</span>
+                        </div>
+                        <span style="font-weight: 700; color: #fff;">₹{% widthratio item.price 1 item.quantity %}</span>
+                    </li>
+                    {% endfor %}
+                </ul>
+
+                <div style="border-top: 1px dashed rgba(255,255,255,0.08); padding-top: 12px; margin-top: 12px;">
+                    <div class="receipt-row">
+                        <span>Subtotal:</span>
+                        <strong>₹{{ order.total_price }}</strong>
+                    </div>
+                    <div class="receipt-row">
+                        <span>GST / Taxes:</span>
+                        <strong style="color: #2ecc71;">Included (₹0.00 extra)</strong>
+                    </div>
+                    <div class="receipt-total" style="margin-top: 10px;">
+                        <span>Grand Total:</span>
+                        <span>₹{{ order.total_price }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons Grid -->
+            <div class="actions-grid">
+                <a href="{% url 'menu' %}" class="btn-action-primary">
+                    <span>🍦</span> Order More Chilled Delights
+                </a>
+                <a href="{% url 'home' %}" class="btn-action-secondary">
+                    <span>🏡</span> Return to Parlour Home
+                </a>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p style="font-size: 13px; color: var(--text-muted);">&copy; 2026 Donzel Artisanal Ice Cream Parlour. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        function toggleProfileDrawer() {
+            var drawer = document.getElementById("profileDrawer");
+            var overlay = document.getElementById("drawerOverlay");
+            drawer.classList.toggle("active");
+            overlay.classList.toggle("active");
+        }
+
+        function toggleMyOrdersAccordion() {
+            var accordion = document.getElementById("myOrdersAccordion");
+            if (accordion) {
+                accordion.style.display = (accordion.style.display === "none" || accordion.style.display === "") ? "block" : "none";
+            }
+        }
+
+        var orderId = {{ order.id }};
+        function checkLiveOrderStatus() {
+            fetch('/api/order-status/' + orderId + '/')
+                .then(response => response.json())
+                .then(data => {
+                    var statusBadge = document.getElementById('liveStatusText');
+                    if (statusBadge) {
+                        statusBadge.innerText = data.status;
+                    }
+                    
+                    var step1 = document.getElementById('step1');
+                    var step2 = document.getElementById('step2');
+                    var step3 = document.getElementById('step3');
+                    var step4 = document.getElementById('step4');
+
+                    if (data.status === 'Pending Approval') {
+                        if (step1) step1.className = 'timeline-step active';
+                        if (step2) step2.className = 'timeline-step';
+                        if (step3) step3.className = 'timeline-step';
+                        if (step4) step4.className = 'timeline-step';
+                    } else if (data.status === 'Accepted & Preparing') {
+                        if (step1) step1.className = 'timeline-step completed';
+                        if (step2) step2.className = 'timeline-step active';
+                        if (step3) step3.className = 'timeline-step';
+                        if (step4) step4.className = 'timeline-step';
+
+                        var headerTitle = document.getElementById('mainHeaderTitle');
+                        if (headerTitle) headerTitle.innerText = '🍨 Kitchen is Preparing Your Order!';
+                        var banner = document.getElementById('orderStatusBanner');
+                        if (banner) {
+                            banner.innerHTML = '🍨 <strong>Parlour Kitchen: Your order has been accepted and is being freshly prepared!</strong>';
+                        }
+                    } else if (data.status === 'Order Ready') {
+                        if (step1) step1.className = 'timeline-step completed';
+                        if (step2) step2.className = 'timeline-step completed';
+                        if (step3) step3.className = 'timeline-step active';
+                        if (step4) step4.className = 'timeline-step';
+
+                        var headerTitle = document.getElementById('mainHeaderTitle');
+                        if (headerTitle) headerTitle.innerText = '🔔 Your Order is Ready!';
+                        var banner = document.getElementById('orderStatusBanner');
+                        if (banner) {
+                            banner.innerHTML = '🎉 <strong>Order Ready! Manager has marked your order as prepared & ready.</strong>';
+                            banner.style.background = 'linear-gradient(135deg, rgba(46,204,113,0.3), rgba(46,204,113,0.1))';
+                        }
+                    } else if (data.status === 'Order Served') {
+                        if (step1) step1.className = 'timeline-step completed';
+                        if (step2) step2.className = 'timeline-step completed';
+                        if (step3) step3.className = 'timeline-step completed';
+                        if (step4) step4.className = 'timeline-step active completed';
+
+                        var headerTitle = document.getElementById('mainHeaderTitle');
+                        if (headerTitle) headerTitle.innerText = '🍽️ Order Served to Your Table!';
+                        var banner = document.getElementById('orderStatusBanner');
+                        if (banner) {
+                            banner.innerHTML = '🍽️ <strong>Served! Your delicious treats have been served to your table. Enjoy your meal!</strong>';
+                            banner.style.background = 'linear-gradient(135deg, rgba(46,204,113,0.3), rgba(46,204,113,0.1))';
+                        }
+                    } else if (data.is_completed || data.status === 'Order Delivered') {
+                        if (step1) step1.className = 'timeline-step completed';
+                        if (step2) step2.className = 'timeline-step completed';
+                        if (step3) step3.className = 'timeline-step completed';
+                        if (step4) step4.className = 'timeline-step active completed';
+
+                        var headerTitle = document.getElementById('mainHeaderTitle');
+                        if (headerTitle) headerTitle.innerText = '🎉 Order Completed!';
+                        var banner = document.getElementById('orderStatusBanner');
+                        if (banner) {
+                            banner.innerHTML = '🎉 <strong>Your order is completed! Thank you for choosing Donzel Artisanal Ice Cream.</strong>';
+                            banner.style.background = 'linear-gradient(135deg, rgba(46,204,113,0.3), rgba(46,204,113,0.1))';
+                        }
+                    }
+                })
+                .catch(err => console.log('Polling status error:', err));
+        }
+
+        // Poll order status every 3 seconds for live kitchen updates
+        setInterval(checkLiveOrderStatus, 3000);
+    </script>
+</body>
+</html>

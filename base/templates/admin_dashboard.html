@@ -1,0 +1,516 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manager Admin Panel | Donzel Artisanal Ice Cream Parlour</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-gold: #c5a880;
+            --dark-bg: #090a0f;
+            --surface-bg: #12141c;
+            --card-bg: #181b28;
+            --text-light: #f8f9fa;
+            --text-muted: #a0a5b5;
+            --border-color: rgba(197, 168, 128, 0.25);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Montserrat', sans-serif; background-color: var(--dark-bg); color: var(--text-light); line-height: 1.6; min-height: 100vh; display: flex; flex-direction: column; justify-content: space-between; overflow-x: hidden; }
+        h1, h2, h3, h4 { font-family: 'Cormorant Garamond', serif; letter-spacing: 1px; }
+        .container { max-width: 1350px; margin: 0 auto; padding: 0 20px; width: 100%; }
+
+        /* Dedicated Staff Navbar (No Customer Links) */
+        .navbar { position: fixed; top: 0; left: 0; width: 100%; height: 70px; z-index: 1000; background: rgba(10, 11, 16, 0.96); backdrop-filter: blur(16px); border-bottom: 1px solid rgba(197, 168, 128, 0.3); display: flex; align-items: center; }
+        .nav-container { display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 1350px; margin: 0 auto; padding: 0 20px; }
+        .logo { font-size: 24px; color: var(--primary-gold); text-decoration: none; text-transform: uppercase; font-weight: 700; font-family: 'Cormorant Garamond', serif; display: flex; align-items: center; gap: 10px; }
+        
+        .admin-badge {
+            background: linear-gradient(135deg, rgba(197, 168, 128, 0.25), rgba(197, 168, 128, 0.08));
+            border: 1px solid var(--primary-gold);
+            color: var(--primary-gold);
+            padding: 5px 14px;
+            border-radius: 14px;
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-admin-logout {
+            background: rgba(231, 76, 60, 0.15);
+            border: 1px solid #e74c3c;
+            color: #ff6b6b;
+            padding: 7px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+        .btn-admin-logout:hover {
+            background: #e74c3c;
+            color: #fff;
+        }
+
+        .page-header { padding: 115px 0 35px 0; background: linear-gradient(rgba(9,10,15,0.92), rgba(9,10,15,0.96)), url('{% static "images/hero3_bg.png" %}') no-repeat center center/cover; text-align: center; border-bottom: 1px solid var(--border-color); }
+        .page-header h1 { font-size: 40px; color: var(--primary-gold); margin-bottom: 6px; }
+
+        /* Stats Cards Bar */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
+            margin: -30px 0 35px 0;
+            position: relative;
+            z-index: 10;
+        }
+        .stat-card {
+            background: var(--surface-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 18px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.7);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            user-select: none;
+        }
+        .stat-card:hover {
+            border-color: var(--primary-gold);
+            transform: translateY(-3px);
+            background: rgba(197, 168, 128, 0.08);
+        }
+        .stat-card.active-stat {
+            border-color: var(--primary-gold);
+            box-shadow: 0 0 20px rgba(197, 168, 128, 0.35);
+            background: rgba(197, 168, 128, 0.15);
+            transform: translateY(-2px);
+        }
+        .stat-label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; font-weight: 700; margin-bottom: 4px; }
+        .stat-value { font-size: 26px; font-weight: 700; color: #fff; font-family: 'Cormorant Garamond', serif; }
+
+        /* Filter Tabs */
+        .filter-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+            overflow-x: auto;
+            padding-bottom: 8px;
+        }
+        .tab-btn {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            padding: 10px 18px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+        .tab-btn:hover, .tab-btn.active {
+            background: rgba(197, 168, 128, 0.15);
+            border-color: var(--primary-gold);
+            color: var(--primary-gold);
+        }
+
+        /* Order Cards Grid */
+        .orders-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+            gap: 24px;
+            margin-bottom: 60px;
+        }
+        .order-card {
+            background: var(--card-bg);
+            border: 1.5px solid var(--border-color);
+            border-radius: 18px;
+            padding: 22px;
+            box-shadow: 0 12px 30px rgba(0,0,0,0.6);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        .order-card:hover {
+            border-color: var(--primary-gold);
+            box-shadow: 0 15px 35px rgba(197, 168, 128, 0.2);
+        }
+
+        .order-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            padding-bottom: 12px;
+            margin-bottom: 14px;
+        }
+        .order-id-title { font-size: 18px; font-weight: 700; color: var(--primary-gold); font-family: 'Cormorant Garamond', serif; }
+        .order-time-stamp { font-size: 11px; color: var(--text-muted); }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .status-pending { background: rgba(241, 196, 15, 0.15); color: #f1c40f; border: 1px solid #f1c40f; }
+        .status-preparing { background: rgba(52, 152, 219, 0.15); color: #3498db; border: 1px solid #3498db; }
+        .status-ready { background: rgba(46, 204, 113, 0.2); color: #2ecc71; border: 1px solid #2ecc71; box-shadow: 0 0 10px rgba(46, 204, 113, 0.3); }
+        .status-delivery { background: rgba(155, 89, 182, 0.15); color: #9b59b6; border: 1px solid #9b59b6; }
+        .status-completed { background: rgba(255, 255, 255, 0.1); color: #aaa; border: 1px solid #666; }
+
+        .cust-details-box {
+            background: rgba(0,0,0,0.3);
+            border-radius: 10px;
+            padding: 12px;
+            margin-bottom: 14px;
+            font-size: 12px;
+            line-height: 1.5;
+        }
+        .cust-name { font-weight: 700; color: #fff; font-size: 14px; margin-bottom: 2px; }
+        .cust-sub { color: var(--text-muted); font-size: 11px; }
+
+        .items-list {
+            list-style: none;
+            margin-bottom: 14px;
+            max-height: 150px;
+            overflow-y: auto;
+            padding-right: 5px;
+            border-top: 1px dashed rgba(255,255,255,0.08);
+            border-bottom: 1px dashed rgba(255,255,255,0.08);
+            padding-top: 8px;
+            padding-bottom: 8px;
+        }
+        .item-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: #ddd;
+            margin-bottom: 5px;
+        }
+
+        /* Action Buttons */
+        .btn-status-action {
+            width: 100%;
+            border: none;
+            padding: 12px 14px;
+            border-radius: 8px;
+            font-weight: 800;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            margin-top: 6px;
+        }
+        .btn-ready {
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            color: #fff;
+            box-shadow: 0 4px 15px rgba(46, 204, 113, 0.4);
+        }
+        .btn-ready:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(46, 204, 113, 0.6);
+        }
+
+        .btn-accept { background: linear-gradient(135deg, #f1c40f, #d4ac0d); color: #111; }
+        .btn-dispatch { background: linear-gradient(135deg, #9b59b6, #8e44ad); color: #fff; }
+        .btn-complete { background: rgba(255, 255, 255, 0.08); border: 1px solid var(--border-color); color: #ccc; }
+
+        footer { background-color: #06070a; padding: 30px 0 20px 0; border-top: 1px solid var(--border-color); text-align: center; }
+    </style>
+</head>
+<body>
+
+    <!-- Staff Admin Navbar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                🍨 DONZEL MANAGER ADMIN PANEL
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <span class="admin-badge">👤 Manager: {{ admin_user }}</span>
+                <a href="{% url 'admin_logout' %}" class="btn-admin-logout">🚪 Logout Admin</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Header -->
+    <header class="page-header">
+        <div class="container">
+            <h1>Shop Order Control & Status Manager</h1>
+            <p style="font-size: 14px; color: var(--text-muted);">Real-time Customer Order Tracking & Multi-Stage Preparation Control Panel</p>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Stats Summary Bar -->
+        <!-- Stats Summary Bar -->
+        <div class="stats-grid">
+            <div class="stat-card" data-status="all" onclick="filterOrders('all')">
+                <div class="stat-label">Total Incoming Orders</div>
+                <div class="stat-value">{{ total_orders }}</div>
+            </div>
+            <div class="stat-card" data-status="all" onclick="filterOrders('all')">
+                <div class="stat-label">Total Revenue</div>
+                <div class="stat-value" style="color: var(--primary-gold);">₹{{ total_revenue }}</div>
+            </div>
+            <div class="stat-card" data-status="Pending Approval" onclick="filterOrders('Pending Approval')">
+                <div class="stat-label">Stage 1: Pending Orders</div>
+                <div class="stat-value" style="color: #f1c40f;">{{ pending_count }}</div>
+            </div>
+            <div class="stat-card" data-status="Accepted & Preparing" onclick="filterOrders('Accepted & Preparing')">
+                <div class="stat-label">Preparing Orders</div>
+                <div class="stat-value" style="color: #3498db;">{{ preparing_count }}</div>
+            </div>
+            <div class="stat-card" data-status="Order Ready" onclick="filterOrders('Order Ready')">
+                <div class="stat-label">Stage 2: Ready Orders</div>
+                <div class="stat-value" style="color: #2ecc71;">{{ ready_count }}</div>
+            </div>
+            <div class="stat-card" data-status="Order Served" onclick="filterOrders('Order Served')">
+                <div class="stat-label">🍽️ Dine-In Served</div>
+                <div class="stat-value" style="color: var(--primary-gold);">{{ served_count }}</div>
+            </div>
+            <div class="stat-card" data-status="Order Delivered" onclick="filterOrders('Order Delivered')">
+                <div class="stat-label">Completed Orders</div>
+                <div class="stat-value" style="color: #aaa;">{{ completed_count }}</div>
+            </div>
+        </div>
+
+        <!-- Filter Tabs -->
+        <div class="filter-tabs">
+            <button class="tab-btn active" data-status="all" onclick="filterOrders('all')">All Orders ({{ total_orders }})</button>
+            <button class="tab-btn" data-status="Pending Approval" onclick="filterOrders('Pending Approval')">⏳ Pending Orders ({{ pending_count }})</button>
+            <button class="tab-btn" data-status="Accepted & Preparing" onclick="filterOrders('Accepted & Preparing')">🍨 Preparing ({{ preparing_count }})</button>
+            <button class="tab-btn" data-status="Order Ready" onclick="filterOrders('Order Ready')">✅ Stage 2: Ready ({{ ready_count }})</button>
+            <button class="tab-btn" data-status="Order Served" onclick="filterOrders('Order Served')">🍽️ Served ({{ served_count }})</button>
+            <button class="tab-btn" data-status="Order Delivered" onclick="filterOrders('Order Delivered')">🎉 Completed ({{ completed_count }})</button>
+        </div>
+
+        <!-- Order Cards Grid -->
+        <div class="orders-grid">
+            <div id="no-orders-message" style="display: none; grid-column: 1 / -1; text-align: center; padding: 60px 0; color: var(--text-muted);">
+                <div style="font-size: 40px; margin-bottom: 10px;">🍨</div>
+                <div style="font-size: 18px;" id="no-orders-text">No active orders matching this status.</div>
+            </div>
+            {% for order in orders %}
+            <div class="order-card" data-status="{{ order.status }}" id="order-card-{{ order.id }}">
+                <div>
+                    <div class="order-card-header">
+                        <div>
+                            <div class="order-id-title">Order Token #{{ order.id|stringformat:"04d" }}</div>
+                            <div class="order-time-stamp">🕒 Received: {{ order.created_at|date:"H:i, d M" }}</div>
+                        </div>
+                        <span class="status-badge {% if order.status == 'Pending Approval' %}status-pending{% elif order.status == 'Accepted & Preparing' %}status-preparing{% elif order.status == 'Order Ready' %}status-ready{% elif order.status == 'Order Served' %}status-ready{% elif order.status == 'Out for Delivery' %}status-delivery{% else %}status-completed{% endif %}">
+                            {% if order.status == 'Pending Approval' %}Placed{% elif order.status == 'Accepted & Preparing' %}Preparing{% elif order.status == 'Order Ready' %}Ready{% elif order.status == 'Order Served' %}Served{% else %}{{ order.status }}{% endif %}
+                        </span>
+                    </div>
+
+                    <!-- Customer Info Box -->
+                    <div class="cust-details-box">
+                        <div class="cust-name">👤 {{ order.customer_name }}</div>
+                        <div class="cust-sub">📞 {{ order.customer_phone|default:"No phone" }} | 📧 {{ order.customer_email }}</div>
+                        <div class="cust-sub" style="margin-top: 4px; font-weight: bold; color: var(--primary-gold);">
+                            {% if order.order_type == 'dine_in' %}
+                                🍽️ Serving Mode: <strong>Dine-In Parlour</strong> {% if order.table_number %}(<span style="color:#fff;">{{ order.table_number }}</span>){% endif %}
+                            {% else %}
+                                🛍️ Serving Mode: <strong>Takeaway Pickup</strong>
+                            {% endif %}
+                        </div>
+                        {% if order.order_type != 'dine_in' and order.order_type != 'takeaway' and order.delivery_address %}
+                        <div class="cust-sub" style="margin-top: 2px;">📍 {{ order.delivery_address }}</div>
+                        {% endif %}
+                        <div class="cust-sub" style="margin-top: 4px;">
+                            💳 Payment: <strong>{{ order.payment_status }}</strong> ({{ order.payment_method }})
+                        </div>
+                    </div>
+
+                    <!-- Itemized List -->
+                    <ul class="items-list">
+                        {% for item in order.items.all %}
+                        <li class="item-row">
+                            <span><strong>{{ item.quantity }}x</strong> {{ item.item_name }}</span>
+                            <span>₹{% widthratio item.price 1 item.quantity %}</span>
+                        </li>
+                        {% endfor %}
+                    </ul>
+
+                    <div style="display: flex; justify-content: space-between; align-items: center; font-size: 16px; font-weight: bold; color: var(--primary-gold); margin-bottom: 12px;">
+                        <span>Total Bill:</span>
+                        <span>₹{{ order.total_price }}</span>
+                    </div>
+                </div>
+
+                <!-- Status Action Buttons -->
+                <div>
+                    {% if order.order_type == 'dine_in' %}
+                        <!-- Dine-In Flow: Placed -> Preparing -> Ready -> Served -->
+                        {% if order.status == 'Pending Approval' %}
+                        <form method="POST" action="{% url 'update_order_status' order_id=order.id %}" style="margin-bottom: 6px;">
+                            {% csrf_token %}
+                            <input type="hidden" name="status" value="Accepted & Preparing">
+                            <button type="submit" class="btn-status-action btn-accept">
+                                <span>🍨</span> Accept & Mark Preparing
+                            </button>
+                        </form>
+                        {% elif order.status == 'Accepted & Preparing' %}
+                        <form method="POST" action="{% url 'update_order_status' order_id=order.id %}" style="margin-bottom: 6px;">
+                            {% csrf_token %}
+                            <input type="hidden" name="status" value="Order Ready">
+                            <button type="submit" class="btn-status-action btn-ready">
+                                <span>🔔</span> Mark Order Ready
+                            </button>
+                        </form>
+                        {% elif order.status == 'Order Ready' %}
+                        <form method="POST" action="{% url 'update_order_status' order_id=order.id %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="status" value="Order Served">
+                            <button type="submit" class="btn-status-action btn-ready" style="background: linear-gradient(135deg, #c5a880, #a88b62); color: #111;">
+                                <span>🍽️</span> Mark Order Served to Table
+                            </button>
+                        </form>
+                        {% elif order.status == 'Order Served' %}
+                        <div style="text-align: center; font-size: 11px; color: #2ecc71; font-weight: bold; padding: 8px; background: rgba(46, 204, 113, 0.1); border-radius: 8px;">
+                            🍽️ Served to Table {{ order.table_number }}
+                        </div>
+                        {% else %}
+                        <div style="text-align: center; font-size: 11px; color: #aaa; font-weight: bold; padding: 8px; background: rgba(255, 255, 255, 0.05); border-radius: 8px;">
+                            ✅ Completed Order
+                        </div>
+                        {% endif %}
+
+                    {% else %}
+                        <!-- Takeaway / Delivery Flow -->
+                        {% if order.status == 'Pending Approval' or order.status == 'Accepted & Preparing' %}
+                        <form method="POST" action="{% url 'update_order_status' order_id=order.id %}" style="margin-bottom: 6px;">
+                            {% csrf_token %}
+                            <input type="hidden" name="status" value="Order Ready">
+                            <button type="submit" class="btn-status-action btn-ready">
+                                <span>🍨</span> Mark as Ready for Pickup
+                            </button>
+                        </form>
+                        {% elif order.status == 'Order Ready' %}
+                        <form method="POST" action="{% url 'update_order_status' order_id=order.id %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="status" value="Order Delivered">
+                            <button type="submit" class="btn-status-action btn-complete">
+                                <span>🎉</span> Mark Order Completed
+                            </button>
+                        </form>
+                        {% else %}
+                        <div style="text-align: center; font-size: 11px; color: #aaa; font-weight: bold; padding: 8px; background: rgba(255, 255, 255, 0.05); border-radius: 8px;">
+                            ✅ Order Completed & Handed Over
+                        </div>
+                        {% endif %}
+                    {% endif %}
+                </div>
+
+            </div>
+            {% empty %}
+            <div style="grid-column: 1 / -1; text-align: center; padding: 60px 0; color: var(--text-muted);">
+                <div style="font-size: 40px; margin-bottom: 10px;">🍨</div>
+                <div style="font-size: 18px;">No active orders in parlour queue.</div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Staff Footer -->
+    <footer>
+        <div class="container">
+            <p style="font-size: 12px; color: var(--text-muted);">&copy; 2026 Donzel Artisanal Ice Cream Parlour. Staff / Manager Order Management System.</p>
+        </div>
+    </footer>
+
+    <script>
+        function filterOrders(status, updateUrl) {
+            if (updateUrl === undefined) updateUrl = true;
+            
+            var cards = document.querySelectorAll('.order-card');
+            var tabs = document.querySelectorAll('.tab-btn');
+            var statCards = document.querySelectorAll('.stat-card');
+            
+            // Sync tab button active states
+            tabs.forEach(function(tab) {
+                if (tab.getAttribute('data-status') === status) {
+                    tab.classList.add('active');
+                } else {
+                    tab.classList.remove('active');
+                }
+            });
+
+            // Sync stat card active states
+            statCards.forEach(function(sc) {
+                if (sc.getAttribute('data-status') === status) {
+                    sc.classList.add('active-stat');
+                } else {
+                    sc.classList.remove('active-stat');
+                }
+            });
+
+            // Filter order cards
+            var visibleCount = 0;
+            cards.forEach(function(card) {
+                var cardStatus = card.getAttribute('data-status');
+                if (status === 'all' || cardStatus === status) {
+                    card.style.display = 'flex';
+                    visibleCount++;
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+
+            // Show empty status feedback if no orders match the filter
+            var noOrdersMsg = document.getElementById('no-orders-message');
+            var noOrdersText = document.getElementById('no-orders-text');
+            if (noOrdersMsg) {
+                if (visibleCount === 0 && cards.length > 0) {
+                    noOrdersMsg.style.display = 'block';
+                    noOrdersText.textContent = 'No orders found matching status: "' + status + '"';
+                } else {
+                    noOrdersMsg.style.display = 'none';
+                }
+            }
+
+            // Save filter state to URL parameter & localStorage
+            if (updateUrl) {
+                try {
+                    var url = new URL(window.location.href);
+                    url.searchParams.set('status', status);
+                    window.history.replaceState({}, '', url);
+                    localStorage.setItem('donzel_admin_filter', status);
+                } catch(e) {}
+            }
+        }
+
+        // Initialize active filter on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            var urlParams = new URLSearchParams(window.location.search);
+            var savedStatus = urlParams.get('status') || localStorage.getItem('donzel_admin_filter') || 'all';
+            filterOrders(savedStatus, false);
+        });
+
+        // Auto-refresh order queue every 15 seconds to receive new incoming customer requests
+        setTimeout(function() {
+            window.location.reload();
+        }, 15000);
+    </script>
+</body>
+</html>

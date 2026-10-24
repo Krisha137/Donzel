@@ -1,0 +1,324 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Donzel Express Payment Gateway | Donzel Artisanal Ice Cream Parlour</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-gold: #c5a880;
+            --dark-bg: #0b0c10;
+            --surface-bg: #14161d;
+            --card-bg: #1a1d29;
+            --text-light: #f8f9fa;
+            --text-muted: #a0a5b5;
+            --border-color: rgba(197, 168, 128, 0.25);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Montserrat', sans-serif; background-color: var(--dark-bg); color: var(--text-light); line-height: 1.6; min-height: 100vh; display: flex; flex-direction: column; justify-content: space-between; }
+        h1, h2, h3, h4 { font-family: 'Cormorant Garamond', serif; letter-spacing: 1px; }
+        .container { max-width: 1150px; margin: 0 auto; padding: 0 20px; width: 100%; }
+
+        .navbar { position: fixed; top: 0; left: 0; width: 100%; height: 70px; z-index: 1000; background: rgba(13, 13, 13, 0.95); backdrop-filter: blur(16px); border-bottom: 1px solid rgba(197, 168, 128, 0.2); display: flex; align-items: center; }
+        .nav-container { display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+        .logo { font-size: 24px; color: var(--primary-gold); text-decoration: none; text-transform: uppercase; font-weight: 700; font-family: 'Cormorant Garamond', serif; display: flex; align-items: center; gap: 8px; }
+        .nav-right-group { display: flex; align-items: center; gap: 20px; }
+        .nav-link-item { color: var(--text-light); text-decoration: none; font-size: 12px; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 600; }
+        .nav-link-item:hover, .nav-link-item.active { color: var(--primary-gold); }
+
+        .cart-pill { display: inline-flex; align-items: center; gap: 8px; background: rgba(197, 168, 128, 0.1); border: 1px solid rgba(197, 168, 128, 0.3); padding: 6px 14px; border-radius: 20px; color: var(--primary-gold); text-decoration: none; font-size: 12px; font-weight: 600; }
+        .cart-count-badge { background: var(--primary-gold); color: #111; font-size: 11px; font-weight: 700; border-radius: 10px; padding: 2px 7px; }
+
+        .profile-trigger-btn { background: rgba(197, 168, 128, 0.1); border: 1px solid rgba(197, 168, 128, 0.3); color: var(--primary-gold); padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; }
+
+        .drawer-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(4px); z-index: 2000; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
+        .drawer-overlay.active { opacity: 1; pointer-events: auto; }
+
+        .profile-drawer { position: fixed; top: 0; right: -420px; width: 380px; max-width: 90vw; height: 100vh; background: #121212; border-left: 1px solid rgba(197, 168, 128, 0.25); z-index: 2001; transition: right 0.3s cubic-bezier(0.16, 1, 0.3, 1); display: flex; flex-direction: column; justify-content: space-between; padding: 25px 20px; box-shadow: -10px 0 30px rgba(0,0,0,0.8); overflow-y: auto; }
+        .profile-drawer.active { right: 0; }
+
+        .drawer-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 18px; margin-bottom: 25px; }
+        .drawer-title { font-size: 20px; color: var(--primary-gold); font-family: 'Cormorant Garamond', serif; text-transform: uppercase; letter-spacing: 1.5px; }
+        .drawer-close-btn { background: none; border: none; color: var(--text-muted); font-size: 24px; cursor: pointer; }
+
+        .drawer-nav-list { list-style: none; display: flex; flex-direction: column; gap: 12px; flex-grow: 1; }
+        .drawer-nav-list a { display: flex; align-items: center; gap: 12px; color: #d1d1d1; text-decoration: none; font-size: 13px; text-transform: uppercase; letter-spacing: 1.5px; padding: 10px 14px; border-radius: 4px; transition: all 0.2s ease; background: rgba(255,255,255,0.02); border: 1px solid transparent; }
+        .drawer-nav-list a:hover { background: rgba(197, 168, 128, 0.1); border-color: rgba(197, 168, 128, 0.3); color: var(--primary-gold); }
+
+        .drawer-logout-btn { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; padding: 12px; background: rgba(217, 83, 79, 0.1); border: 1px solid #d9534f; color: #d9534f; text-decoration: none; font-size: 12px; text-transform: uppercase; letter-spacing: 2px; font-weight: 600; border-radius: 4px; transition: all 0.3s ease; margin-top: 20px; }
+        .drawer-logout-btn:hover { background: #d9534f; color: #fff; }
+
+        /* Page Layout */
+        .page-header { padding: 140px 0 45px 0; background: linear-gradient(rgba(11,12,16,0.88), rgba(11,12,16,0.95)), url('{% static "images/hero3_bg.png" %}') no-repeat center center/cover; text-align: center; border-bottom: 1px solid var(--border-color); }
+        .page-header h1 { font-size: 52px; color: var(--primary-gold); margin-bottom: 10px; }
+
+        .payment-section { padding: 60px 0 90px 0; flex: 1; }
+        .payment-grid { display: grid; grid-template-columns: 1fr 400px; gap: 40px; }
+
+        .payment-card { background: var(--surface-bg); border: 1px solid var(--border-color); border-radius: 16px; padding: 30px; }
+
+        .timer-badge { background: rgba(231, 76, 60, 0.15); border: 1px solid #e74c3c; color: #ff6b6b; padding: 8px 18px; border-radius: 20px; font-size: 13px; font-weight: 700; display: inline-flex; align-items: center; gap: 8px; margin-bottom: 25px; }
+
+        .payment-methods-box {
+            background: rgba(255,255,255,0.03); border: 1px solid var(--border-color); border-radius: 12px; padding: 20px; margin: 20px 0; text-align: left;
+        }
+
+        .btn-pay-online {
+            background: var(--primary-gold); color: #111; border: none; padding: 16px 28px; border-radius: 10px; font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 5px 20px rgba(197, 168, 128, 0.4); width: 100%; margin-top: 10px;
+        }
+        .btn-pay-online:hover { background: #d4b68e; transform: translateY(-2px); }
+
+        .btn-cod {
+            background: rgba(255,255,255,0.05); border: 1px solid var(--border-color); color: var(--text-light); padding: 14px 28px; border-radius: 10px; font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; cursor: pointer; width: 100%; margin-top: 12px; transition: all 0.3s;
+        }
+        .btn-cod:hover { border-color: var(--primary-gold); color: var(--primary-gold); }
+
+        /* Right Side Bill Summary Card */
+        .bill-card { background: var(--surface-bg); border: 1px solid var(--primary-gold); border-radius: 16px; padding: 30px; position: sticky; top: 100px; box-shadow: 0 12px 35px rgba(0,0,0,0.7); }
+        .bill-title { font-size: 24px; color: var(--primary-gold); border-bottom: 1px solid var(--border-color); padding-bottom: 14px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }
+        .bill-item-list { list-style: none; margin-bottom: 20px; max-height: 260px; overflow-y: auto; padding-right: 5px; }
+        .bill-item-row { display: flex; justify-content: space-between; font-size: 13px; color: var(--text-light); margin-bottom: 12px; border-bottom: 1px dashed rgba(255,255,255,0.08); padding-bottom: 10px; }
+        .bill-item-name { font-weight: 500; }
+        .bill-item-qty { color: var(--primary-gold); font-weight: 700; margin-right: 6px; }
+        .bill-item-price { font-weight: 600; color: #fff; }
+
+        .bill-total-box { display: flex; justify-content: space-between; align-items: center; font-size: 24px; font-weight: 700; color: #fff; border-top: 1px solid var(--border-color); padding-top: 16px; margin-top: 15px; font-family: 'Cormorant Garamond', serif; }
+
+        footer { background-color: #08090d; padding: 50px 0 25px 0; border-top: 1px solid var(--border-color); text-align: center; }
+
+        @media (max-width: 900px) {
+            .payment-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Minimal Navbar (Logo, Menu, Cart, Sidebar Button) -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="{% url 'home' %}" class="logo">
+                🍨 DONZEL
+            </a>
+
+            <div class="nav-right-group">
+                <a href="{% url 'menu' %}" class="nav-link-item">Menu</a>
+
+                <a href="{% url 'cart' %}" class="cart-pill" title="View Cart">
+                    <span>🛒 Cart</span>
+                    <span class="cart-count-badge">{{ cart_count }}</span>
+                </a>
+
+                <button class="profile-trigger-btn" onclick="toggleProfileDrawer()" title="Open Sidebar">
+                    <span>👤 {% if user.is_authenticated %}{{ user.username }}{% endif %}</span>
+                    <span style="font-size:14px; font-weight:bold;">⋯</span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    {% include 'includes/sidebar.html' %}
+
+    <!-- Header -->
+    <header class="page-header">
+        <div class="container">
+            <h1>Donzel Express Payment Gateway</h1>
+            <p style="font-size: 16px; color: var(--text-muted);">Step 2 of 2: Select Your Preferred Payment Choice</p>
+        </div>
+    </header>
+
+    <!-- 2-Column Payment Section -->
+    <section class="payment-section">
+        <div class="container">
+            <div class="payment-grid">
+                
+                <!-- Left Column: Donzel Wallet, COD, and Direct UPI Option -->
+                <div class="payment-card" style="text-align: left;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid var(--border-color); padding-bottom: 15px;">
+                        <div>
+                            <h3 style="font-size: 24px; color: #fff; margin-bottom: 4px;">Total Bill: <span style="color: var(--primary-gold);">₹{{ cart_subtotal }}</span></h3>
+                            <p style="font-size: 13px; color: var(--text-muted);">Customer: <strong>{{ checkout_info.name }}</strong> ({{ checkout_info.phone }})</p>
+                        </div>
+                        <div style="text-align: right;">
+                            <span style="font-size: 11px; background: rgba(197, 168, 128, 0.15); color: var(--primary-gold); padding: 4px 10px; border-radius: 12px; font-weight: bold; border: 1px solid rgba(197,168,128,0.3);">
+                                {% if checkout_info.order_type == 'dine_in' %}
+                                    🍽️ Dine-In ({{ checkout_info.table_number|default:"Table Service" }})
+                                {% elif checkout_info.order_type == 'takeaway' %}
+                                    🛍️ Takeaway Express
+                                {% else %}
+                                    📍 Delivery Saved
+                                {% endif %}
+                            </span>
+                        </div>
+                    </div>
+
+                    {% if error_message %}
+                        <div style="background: rgba(231, 76, 60, 0.2); border: 1px solid #e74c3c; color: #ff6b6b; padding: 14px; border-radius: 10px; margin-bottom: 20px; font-size: 13px; font-weight: bold; line-height: 1.5;">
+                            {{ error_message }}
+                        </div>
+                    {% endif %}
+
+                    <!-- Payment Option 1: Donzel Wallet -->
+                    <div style="background: linear-gradient(135deg, #1f1b14, #2a2217); border: 1px solid var(--primary-gold); border-radius: 14px; padding: 22px; margin-bottom: 20px; box-shadow: 0 8px 25px rgba(0,0,0,0.5);">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                            <div style="font-size: 14px; font-weight: 700; color: var(--primary-gold); text-transform: uppercase; letter-spacing: 1px; display: flex; align-items: center; gap: 8px;">
+                                <span>💳</span> Option 1: Donzel Digital Wallet Balance
+                            </div>
+                            {% if user.is_authenticated %}
+                                <span style="font-size: 11px; color: #2ecc71; font-weight: bold; background: rgba(46, 204, 113, 0.15); padding: 3px 8px; border-radius: 10px;">Active Wallet</span>
+                            {% endif %}
+                        </div>
+
+                        {% if user.is_authenticated %}
+                            <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.4); padding: 12px 16px; border-radius: 10px; margin-bottom: 15px;">
+                                <div>
+                                    <div style="font-size: 11px; color: #aaa;">Your Available Balance</div>
+                                    <div style="font-size: 22px; font-weight: bold; color: #fff; font-family: 'Cormorant Garamond', serif;">₹{{ user_wallet.balance|default:"0.00" }}</div>
+                                </div>
+                                <button onclick="openAddWalletModal()" style="background: rgba(197, 168, 128, 0.2); color: var(--primary-gold); border: 1px solid var(--primary-gold); padding: 6px 14px; border-radius: 20px; font-size: 11px; font-weight: bold; cursor: pointer;">
+                                    ➕ Top Up Wallet
+                                </button>
+                            </div>
+
+                            <form method="POST" action="{% url 'payment' %}">
+                                {% csrf_token %}
+                                <input type="hidden" name="payment_method" value="Donzel Wallet">
+                                {% if existing_order %}<input type="hidden" name="existing_order_id" value="{{ existing_order.id }}">{% endif %}
+
+                                {% if user_wallet.balance >= cart_subtotal %}
+                                    <button type="submit" class="btn-pay-online" style="display: flex; align-items: center; justify-content: center; gap: 8px;">
+                                        <span>⚡</span> Pay ₹{{ cart_subtotal }} Instantly via Donzel Wallet
+                                    </button>
+                                {% else %}
+                                    <div style="font-size: 12px; color: #ff6b6b; margin-bottom: 10px; font-weight: bold; text-align: center;">
+                                        ⚠️ Insufficient balance to cover ₹{{ cart_subtotal }}. Please top up your wallet to proceed.
+                                    </div>
+                                    <button type="button" onclick="openAddWalletModal()" class="btn-pay-online" style="background: rgba(197,168,128,0.2); color: var(--primary-gold); border: 1px solid var(--primary-gold);">
+                                        ➕ Top Up ₹{{ cart_subtotal }} to Pay via Wallet
+                                    </button>
+                                {% endif %}
+                            </form>
+                        {% else %}
+                            <div style="text-align: center; padding: 15px; background: rgba(0,0,0,0.3); border-radius: 8px;">
+                                <p style="font-size: 13px; color: #ddd; margin-bottom: 12px;">Log in to pay instantly using your Donzel Wallet balance!</p>
+                                <a href="{% url 'login' %}?next={% url 'payment' %}" style="display: inline-block; background: var(--primary-gold); color: #111; font-weight: bold; padding: 8px 20px; border-radius: 20px; text-decoration: none; font-size: 12px;">Log In to Access Wallet</a>
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Payment Option 2: Direct UPI & Online Payment (Future Scope) -->
+                    <div style="background: rgba(255,255,255,0.02); border: 1px dashed rgba(197, 168, 128, 0.35); border-radius: 14px; padding: 22px; position: relative;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-wrap: wrap; gap: 8px;">
+                            <div style="font-size: 14px; font-weight: 700; color: #aaa; text-transform: uppercase; letter-spacing: 1px; display: flex; align-items: center; gap: 8px;">
+                                <span>📱</span> Option 2: Direct UPI & Online Payment
+                            </div>
+                            <span style="font-size: 11px; background: rgba(231, 76, 60, 0.15); border: 1px solid rgba(231, 76, 60, 0.4); color: #ff7675; padding: 3px 10px; border-radius: 12px; font-weight: 700; letter-spacing: 0.5px;">
+                                🚀 Future Scope (Coming Soon)
+                            </span>
+                        </div>
+
+                        <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px;">
+                            <span style="font-size: 10px; background: rgba(255,255,255,0.05); color: #888; padding: 3px 8px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.08);">GPay</span>
+                            <span style="font-size: 10px; background: rgba(255,255,255,0.05); color: #888; padding: 3px 8px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.08);">PhonePe</span>
+                            <span style="font-size: 10px; background: rgba(255,255,255,0.05); color: #888; padding: 3px 8px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.08);">Paytm</span>
+                            <span style="font-size: 10px; background: rgba(255,255,255,0.05); color: #888; padding: 3px 8px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.08);">Credit / Debit Cards</span>
+                            <span style="font-size: 10px; background: rgba(255,255,255,0.05); color: #888; padding: 3px 8px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.08);">Net Banking</span>
+                        </div>
+
+                        <p style="font-size: 12px; color: #777; margin-bottom: 14px; line-height: 1.6;">
+                            Our automated UPI QR Code and Online Payment gateway integration is currently in development. Online checkout will be activated in an upcoming update.
+                        </p>
+
+                        <button type="button" disabled style="width: 100%; background: rgba(255,255,255,0.03); border: 1px dashed rgba(255,255,255,0.15); color: #666; padding: 14px 20px; border-radius: 10px; font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; cursor: not-allowed; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                            <span>🔒</span> Online Payment (Currently Unavailable)
+                        </button>
+
+                        <div style="margin-top: 12px; font-size: 11px; color: var(--primary-gold); background: rgba(197,168,128,0.08); border: 1px solid rgba(197,168,128,0.2); padding: 8px 12px; border-radius: 8px; display: flex; align-items: center; gap: 8px;">
+                            <span>💡</span> Please use <strong>Option 1 (Donzel Digital Wallet)</strong> to complete and confirm your order.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column: Full Bill Summary Card -->
+                <div class="bill-card">
+                    <div class="bill-title">
+                        <span>📜 Order Summary</span>
+                        <span style="font-size: 12px; color: var(--text-muted);">Bill Details</span>
+                    </div>
+
+                    <ul class="bill-item-list">
+                        {% if existing_order %}
+                            {% for item in existing_order.items.all %}
+                            <li class="bill-item-row">
+                                <div>
+                                    <span class="bill-item-qty">{{ item.quantity }}x</span>
+                                    <span class="bill-item-name">{{ item.item_name }}</span>
+                                </div>
+                                <span class="bill-item-price">₹{% widthratio item.price 1 item.quantity %}</span>
+                            </li>
+                            {% endfor %}
+                        {% else %}
+                            {% for item in cart %}
+                            <li class="bill-item-row">
+                                <div>
+                                    <span class="bill-item-qty">{{ item.quantity }}x</span>
+                                    <span class="bill-item-name">{{ item.name }}</span>
+                                </div>
+                                <span class="bill-item-price">₹{% widthratio item.price 1 item.quantity %}</span>
+                            </li>
+                            {% endfor %}
+                        {% endif %}
+                    </ul>
+
+                    <div style="border-top: 1px solid var(--border-color); padding-top: 15px; margin-top: 10px;">
+                        <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 6px;">
+                            <strong>Customer Name:</strong> {{ checkout_info.name }}
+                        </div>
+                        <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 6px;">
+                            <strong>Receipt Email:</strong> {{ checkout_info.email }}
+                        </div>
+                        <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">
+                            <strong>Serving Mode:</strong> {{ checkout_info.order_type|title }} {% if checkout_info.table_number %}({{ checkout_info.table_number }}){% endif %}
+                        </div>
+
+                        <div class="bill-total-box">
+                            <span>Total Bill:</span>
+                            <span style="color: var(--primary-gold);">₹{{ cart_subtotal }}</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p style="font-size: 13px; color: var(--text-muted);">&copy; 2026 Donzel Artisanal Ice Cream Parlour. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        function toggleProfileDrawer() {
+            var drawer = document.getElementById("profileDrawer");
+            var overlay = document.getElementById("drawerOverlay");
+            drawer.classList.toggle("active");
+            overlay.classList.toggle("active");
+        }
+
+        function toggleMyOrdersAccordion() {
+            var accordion = document.getElementById("myOrdersAccordion");
+            if (accordion) {
+                accordion.style.display = (accordion.style.display === "none" || accordion.style.display === "") ? "block" : "none";
+            }
+        }
+    </script>
+</body>
+</html>
