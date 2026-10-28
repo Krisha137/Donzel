@@ -27,8 +27,8 @@ A full-stack Django web application for an artisanal ice cream parlour, featurin
 
 ### 2. Clone the Repository
 `ash
-git clone https://github.com/Krisha137/Dozel.git
-cd Dozel
+git clone https://github.com/Krisha137/Donzel.git
+cd Donzel
 `
 
 ### 3. Create & Activate Virtual Environment
